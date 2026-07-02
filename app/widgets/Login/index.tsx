@@ -1,68 +1,61 @@
 import { useState } from "react";
-import styles from "./style.module.css";
-import { loginWithPassword } from "../../services/authService";
+import { supabase } from "../../lib/supabase";
 
-interface LoginModalProps {
-  onLoginSuccess: (userId: string, userName: string) => void;
-  onClose?: () => void;
+interface LoginProps {
+  onLoginSuccess: () => void;
 }
 
-export const Login = ({ onLoginSuccess, onClose }: LoginModalProps) => {
-  const [password, setPassword] = useState<string>("");
+export const Login = ({ onLoginSuccess }: LoginProps) => {
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!password.trim()) {
-      setError("Введите пароль");
-      return;
-    }
-
-    setIsLoading(true);
+    setLoading(true);
     setError(null);
 
     try {
-      // Запрос к Supabase через наш сервис
-      const result = await loginWithPassword(password.trim());
+      const { data, error } = await supabase
+        .from("users")
+        .select("id, name, password")
+        .eq("password", password)
+        .maybeSingle();
 
-      if (result.success && result.userId) {
-        // Успешный вход
-        localStorage.setItem("isAuthorized", "true");
-        localStorage.setItem("userId", result.userId);
-        localStorage.setItem("userName", result.userName || "Дегустатор");
+      if (error) throw error;
 
-        // Вызываем callback родителя
-        onLoginSuccess(result.userId, result.userName || "Дегустатор");
-      } else {
-        // Ошибка входа
-        setError(result.error || "Неверный пароль");
+      if (!data) {
+        setError("Неверный пароль");
+        return;
       }
+
+      localStorage.setItem("isAuthorized", "true");
+      localStorage.setItem("userId", data.id);
+      localStorage.setItem("userName", data.name);
+
+      onLoginSuccess();
     } catch (err) {
-      setError("Ошибка соединения. Попробуйте позже.");
+      setError("Ошибка входа");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
-        <form onSubmit={handleSubmit} className={styles.form}>
+    <div className="login-overlay">
+      <div className="login-modal">
+        <h2>Введите пароль</h2>
+        <form onSubmit={handleSubmit}>
           <input
             type="password"
-            className={`${styles.input} ${error ? styles.inputError : ""}`}
-            placeholder="Введите пароль"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            autoFocus
-            disabled={isLoading}
+            placeholder="Пароль"
+            disabled={loading}
           />
-
-          {error && <p className={styles.errorText}>{error}</p>}
-          <button type="submit" className={styles.button} disabled={isLoading}>
-            {isLoading ? "Проверка..." : "Войти"}
+          {error && <p className="error">{error}</p>}
+          <button type="submit" disabled={loading}>
+            {loading ? "Проверка..." : "Войти"}
           </button>
         </form>
       </div>

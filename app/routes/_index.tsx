@@ -1,79 +1,50 @@
 // app/routes/_index.tsx
-import { useLoaderData } from "react-router";
-import { supabase } from "./../lib/supabase";
+import { redirect, useLoaderData } from "react-router";
+import { TastingBoard } from "../pages/TastingBoard";
+import { supabaseServer } from "../lib/supabase"; // ← относительный путь
+import type { Route } from "./+types/_index";
+// Если getUserId и getUserById лежат в session.server.ts
+import { getUserId, getUserById } from "../lib/session.server";
 
-// 📦 Функция для загрузки ВСЕХ записей с пагинацией
-async function fetchAllNotes() {
-  const allNotes: any[] = [];
-  let page = 0;
-  const pageSize = 1000; // Максимум за один запрос
+export async function loader({ request }: { request: Request }) {
+  const userId = await getUserId(request);
 
-  while (true) {
-    const from = page * pageSize;
-    const to = from + pageSize - 1;
-
-    const { data, error } = await supabase
-      .from("notes")
-      .select("*")
-      .range(from, to)
-      .order("id", { ascending: true });
-
-    if (error) {
-      console.error("❌ Ошибка:", error);
-      throw error;
-    }
-
-    if (!data || data.length === 0) {
-      break;
-    }
-
-    allNotes.push(...data);
-
-    if (data.length < pageSize) {
-      break;
-    }
-
-    page++;
+  if (!userId) {
+    throw redirect("/login");
   }
 
-  return allNotes;
-}
-
-// 🔥 Loader на сервере
-export async function loader() {
-  try {
-    const notes = await fetchAllNotes();
-    return { notes, error: null };
-  } catch (err) {
-    console.error("❌ Ошибка:", err);
-    return {
-      notes: [],
-      error: err instanceof Error ? err.message : "Ошибка загрузки",
-    };
+  const user = await getUserById(userId);
+  if (!user) {
+    throw redirect("/login");
   }
+
+  const { data: notes, error } = await supabaseServer
+    .from("notes")
+    .select("id, name, url")
+    .order("id", { ascending: true });
+
+  if (error) {
+    return { notes: [], user, error: "Ошибка загрузки нот" };
+  }
+
+  return { notes: notes || [], user, error: null };
 }
 
-// 🖥️ Компонент
-// export default function Index() {
-//   const { notes, error } = useLoaderData<typeof loader>();
+export default function Index() {
+  const { notes, user, error } = useLoaderData<{
+    notes: any[];
+    user: any;
+    error: string | null;
+  }>();
 
-//   if (error) {
-//     return <div style={{ color: "red", padding: "20px" }}>❌ {error}</div>;
-//   }
+  if (error) {
+    return <div>Ошибка: {error}</div>;
+  }
 
-//   return (
-//     <div style={{ padding: "20px" }}>
-//       <h1>📝 Заметки ({notes.length})</h1>
-//       <ul>
-//         {notes.map((note) => (
-//           <>
-//             <li key={note.id}>{note.name}</li>
-//             <li key={note.id}>
-//               <img src={note.image} referrerPolicy="no-referrer" />
-//             </li>
-//           </>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// }
+  return (
+    <div>
+      <p>Добро пожаловать, {user?.name}!</p>
+      <TastingBoard notes={notes} />
+    </div>
+  );
+}

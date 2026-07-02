@@ -1,8 +1,13 @@
+// vite.config.ts
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
+import path from "path";
 
 export default defineConfig({
   plugins: [reactRouter()],
-  // Важно! Чтобы Vite загружал .env файлы
-  envPrefix: "VITE_",
+  resolve: {
+    alias: {
+      "~": path.resolve(__dirname, "./app"),
+    },
+  },
 });
