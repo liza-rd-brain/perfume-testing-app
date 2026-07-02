@@ -54,26 +54,26 @@ export async function loader() {
 }
 
 // 🖥️ Компонент
-export default function Index() {
-  const { notes, error } = useLoaderData<typeof loader>();
+// export default function Index() {
+//   const { notes, error } = useLoaderData<typeof loader>();
 
-  if (error) {
-    return <div style={{ color: "red", padding: "20px" }}>❌ {error}</div>;
-  }
+//   if (error) {
+//     return <div style={{ color: "red", padding: "20px" }}>❌ {error}</div>;
+//   }
 
-  return (
-    <div style={{ padding: "20px" }}>
-      <h1>📝 Заметки ({notes.length})</h1>
-      <ul>
-        {notes.map((note) => (
-          <>
-            <li key={note.id}>{note.name}</li>
-            <li key={note.id}>
-              <img src={note.image} referrerPolicy="no-referrer" />
-            </li>
-          </>
-        ))}
-      </ul>
-    </div>
-  );
-}
+//   return (
+//     <div style={{ padding: "20px" }}>
+//       <h1>📝 Заметки ({notes.length})</h1>
+//       <ul>
+//         {notes.map((note) => (
+//           <>
+//             <li key={note.id}>{note.name}</li>
+//             <li key={note.id}>
+//               <img src={note.image} referrerPolicy="no-referrer" />
+//             </li>
+//           </>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// }

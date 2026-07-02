@@ -1,0 +1,56 @@
+/* variables.module.css */
+:root {
+    /* Цвета */
+    --color-primary: #1c1b1a;
+    --color-primary-hover: #333231;
+    --color-text: #1c1b1a;
+    --color-text-secondary: #6b6560;
+    --color-text-hint: #9e9690;
+
+    /* Фоны */
+    --color-bg: #faf8f6;
+    --color-bg-white: #ffffff;
+    --color-bg-error: #fff6f6;
+
+    /* Рамки */
+    --color-border: #e5e0db;
+    --color-border-error: #d32f2f;
+    --color-border-focus: #2c2b28;
+
+    /* Статусы */
+    --color-error: #d32f2f;
+    --color-success: #2d5a42;
+
+    /* Размеры */
+    --radius-card: 24px;
+    --radius-input: 14px;
+    --radius-button: 14px;
+
+    /* Отступы */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 12px;
+    --spacing-lg: 16px;
+    --spacing-xl: 24px;
+    --spacing-2xl: 32px;
+
+    /* Шрифты */
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-size-sm: 13px;
+    --font-size-md: 14px;
+    --font-size-lg: 16px;
+    --font-size-xl: 22px;
+
+    /* Тени */
+    --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.15);
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.06);
+
+    /* Анимации */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.2s ease;
+    --transition-slow: 0.3s ease;
+
+    /* Затемнение */
+    --overlay-color: rgba(0, 0, 0, 0.5);
+    --blur-amount: 4px;
+}
