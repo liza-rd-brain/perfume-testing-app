@@ -1,19 +1,20 @@
 import { useState } from "react";
 
-interface Note {
-  id: number;
-  name: string;
-  url: string;
-}
-
-interface TastingBoardProps {
+interface TastingItemProps {
   notes: Note[];
   error?: string | null;
+  perfumeList: any;
 }
 
-export const TastingBoard = ({ notes, error }: TastingBoardProps) => {
+export const TastingItem = ({
+  notes,
+  error,
+  perfumeList,
+}: TastingItemProps) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
+
+  console.log({ perfumeList });
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

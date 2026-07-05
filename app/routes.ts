@@ -7,6 +7,10 @@ export default [
         file: "routes/_index.tsx",
     },
     {
+        path: "/tutorial",
+        file: "routes/tutorial.tsx",
+    },
+    {
         path: "/login",
         file: "routes/login.tsx",
     },

@@ -25,6 +25,13 @@ export async function getUserId(request: Request): Promise<string | null> {
     return session.get("userId") || null;
 }
 
+
+// Получить userId из сессии
+export async function getIsTutorialDone(request: Request): Promise<string | null> {
+    const session = await getSession(request.headers.get("Cookie"));
+    return session.get("tutorialSkipped") || null;
+}
+
 export async function getUserById(userId: string) {
     const { data, error } = await supabase
         .from("users")
@@ -50,8 +57,7 @@ export async function verifyPassword(password: string) {
 
 
 
-// ... остальной код
-
+/* сохраняем юзера в куках */
 export async function createUserSession(userId: string, redirectTo: string) {
     const session = await getSession();
     session.set("userId", userId);
@@ -63,6 +69,24 @@ export async function createUserSession(userId: string, redirectTo: string) {
         },
     });
 }
+
+
+
+
+/* сохраняем юзера в куках */
+export async function createUserDoneTutorial(redirectTo: string) {
+    const session = await getSession();
+    session.set("tutorialSkipped", true);
+
+    // ✅ Используем redirect() из react-router
+    return redirect(redirectTo, {
+        headers: {
+            "Set-Cookie": await commitSession(session),
+        },
+    });
+}
+
+
 
 // Удалить сессию (выход)
 export async function logout(request: Request) {

@@ -85,3 +85,27 @@ This template comes with [Tailwind CSS](https://tailwindcss.com/) already config
 ---
 
 Built with ❤️ using React Router.
+
+
+
+## рандомное представление образцов
+
+
+## IDEA
+* попробовать qr код привязать на ниточку
+и на флакон
+
+
+
+1. логин
+2. туториал или доска тестинга
+3. Открытые ароматы
+4. кеширование запроса нот и сета!
+
+
+
+
+
+
+
+

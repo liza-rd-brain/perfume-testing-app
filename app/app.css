@@ -13,3 +13,13 @@ body {
     color-scheme: dark;
   }
 }
+
+
+
+/* app/app.css */
+@import "tailwindcss";
+
+/* Просто применяем шрифт */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}

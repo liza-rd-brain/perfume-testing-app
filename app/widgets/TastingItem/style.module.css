@@ -1,0 +1,80 @@
+.tasting-board {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.search-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 16px;
+    border: 2px solid #e5e0db;
+    border-radius: 12px;
+    background: #faf8f6;
+    transition: border-color 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #2c2b28;
+}
+
+.loader {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.error-message {
+    color: #d32f2f;
+    padding: 10px;
+    background: #fff6f6;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.notes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.note-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0ece8;
+}
+
+.note-item:hover {
+    background: #f8f5f2;
+}
+
+.note-name {
+    font-weight: 500;
+    flex: 1;
+}
+
+.note-description {
+    color: #6b6560;
+    font-size: 14px;
+}
+
+.note-link {
+    color: #6b6560;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.no-results {
+    text-align: center;
+    color: #6b6560;
+    padding: 40px 0;
+}

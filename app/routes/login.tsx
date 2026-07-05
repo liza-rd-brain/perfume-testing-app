@@ -29,8 +29,15 @@ export async function action({ request }: Route.ActionArgs) {
     return { error: "Неверный пароль" };
   }
 
-  // Создаём сессию и перенаправляем на главную
-  return createUserSession(user.id, "/");
+  const isTutorialDone = formData.get("tutorialSkipped")?.toString();
+
+  console.log({ isTutorialDone });
+  if (!isTutorialDone) {
+    // Создаём сессию и перенаправляем на tutorial
+    return createUserSession(user.id, "/tutorial");
+  } else {
+    return createUserSession(user.id, "/");
+  }
 }
 
 export default function Login() {
