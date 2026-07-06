@@ -18,7 +18,4 @@ export default [
         path: "/testing/:id",
         file: "routes/testing.tsx",
     },
-
-
-
 ] satisfies RouteConfig;

@@ -1,7 +1,26 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useLoaderData,
+} from "react-router";
 import "./app.css";
+import { getAllNotes, getPerfumeList } from "./routes/_index";
+import { AppProvider } from "./context/AppContext";
+
+export async function loader() {
+  console.log("🔄 ===== ROOT LOADER ===== (ТОЛЬКО 1 РАЗ!)");
+  const [notes, perfumeList] = await Promise.all([
+    getAllNotes(),
+    getPerfumeList(),
+  ]);
+  return { notes, perfumeList };
+}
 
 export default function Root() {
+  const { notes, perfumeList } = useLoaderData();
   return (
     <html lang="ru">
       <head>
@@ -19,7 +38,9 @@ export default function Root() {
         ></link>
       </head>
       <body>
-        <Outlet />
+        <AppProvider value={{ notes, perfumeList }}>
+          <Outlet />
+        </AppProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

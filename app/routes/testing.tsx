@@ -1,26 +1,39 @@
 // app/routes/testing.tsx
 import { useLocation, useParams } from "react-router";
 import { TastingScreen } from "~/widgets/TastingScreen/TastingItem";
+import { useAppData } from "~/context/AppContext"; // ← Добавить!
 
-// ❌ Убираем loader - он не нужен
-// export async function loader() { ... }
+// ❌ НЕТ loader!
 
-// ✅ Компонент использует данные из state
 export default function Testing() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
 
-  // ✅ Берем данные из state (переданные при навигации)
-  const perfume = location;
+  // ✅ Получаем данные из контекста (запасной вариант)
+  const { perfumeList, notes } = useAppData();
 
-  console.log({ location });
+  // ✅ 1. Сначала из state (переданные через NavLink)
+  const perfumeFromState = location.state?.perfume;
 
-  // Если данных нет - показываем сообщение
+  // ✅ 2. Если нет в state - ищем в контексте
+  const perfumeFromContext = perfumeList?.find((p) => p.id === Number(id));
+
+  // ✅ 3. Используем то, что нашли
+  const perfume = perfumeFromState || perfumeFromContext;
+
+  console.log({
+    locationState: location.state,
+    perfumeFromState,
+    perfumeFromContext,
+    finalPerfume: perfume,
+    id,
+  });
+
   if (!perfume) {
     return (
       <div style={{ padding: "20px", textAlign: "center" }}>
         <h2>Аромат не найден</h2>
-        <p>Пожалуйста, вернитесь на главную страницу</p>
+        <p>ID: {id}</p>
         <button onClick={() => window.history.back()}>Назад</button>
       </div>
     );
@@ -29,15 +42,23 @@ export default function Testing() {
   return (
     <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
       <h1>Тестирование аромата #{id}</h1>
-      {/*       <p>
-        <strong>Название:</strong> {perfume?.name || null}
+      <p>
+        <strong>Название:</strong> {perfume.name}
       </p>
       <p>
         <strong>Парфюмер:</strong> {perfume.perfumer}
       </p>
       <p>
         <strong>Бренд:</strong> {perfume.brand}
-      </p> */}
+      </p>
+
+      {perfume.link && (
+        <a href={perfume.link} target="_blank" rel="noopener noreferrer">
+          Подробнее на Fragrantica
+        </a>
+      )}
+
+      {/* ✅ Передаем данные в TastingScreen */}
       <TastingScreen />
     </div>
   );

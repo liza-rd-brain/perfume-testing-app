@@ -3,7 +3,7 @@ import { redirect, useLoaderData } from "react-router";
 import { supabaseAdmin } from "../lib/supabase";
 import { getUserId, getUserById } from "../lib/session.server";
 import { TastingList } from "~/pages/TastingList";
-import { notesCache } from "~/lib/notes-cache.server";
+import { notesCache } from "~/lib/notes-cache";
 
 // ✅ Функция для загрузки всех нот с пагинацией
 export async function getAllNotes() {

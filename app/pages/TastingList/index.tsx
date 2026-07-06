@@ -1,25 +1,17 @@
 import { useState } from "react";
-import { NavLink, useLoaderData } from "react-router";
+import { NavLink } from "react-router"; // ← Убрали useLoaderData
 import styles from "./style.module.css";
+import { useAppData } from "~/context/AppContext"; // ← Добавили!
 
 export const TastingList = () => {
-  const { notes, perfumeList } = useLoaderData<{
-    notes: any[];
-    user: any;
-    error: string | null;
-    perfumeList: any[];
-  }>();
+  // ✅ Используем контекст вместо useLoaderData!
+  const { notes, perfumeList } = useAppData();
 
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
-
-  const openTasting = (id: number) => {
-    console.log(id);
-  };
 
   if (!perfumeList || perfumeList.length === 0) {
     return null;
   }
-  //TODO: показать рандомно, выбрать рандомный
 
   return (
     <>
@@ -27,10 +19,13 @@ export const TastingList = () => {
         ({ id, name, perfumer, brand, notes: notesPerfume }: any) => {
           return (
             <NavLink
-              to={`/testing/:${id}`}
-              className={styles.testingItem}
               key={id}
-              state={{ id, name, perfumer, brand, notes: notesPerfume }}
+              // ✅ Убрали двоеточие!
+              to={`/testing/${id}`}
+              className={styles.testingItem}
+              state={{
+                perfume: { id, name, perfumer, brand, notes: notesPerfume },
+              }}
             >
               {id}
             </NavLink>

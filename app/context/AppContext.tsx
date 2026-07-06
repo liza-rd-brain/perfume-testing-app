@@ -43,6 +43,19 @@ export const useAppContext = () => {
   return context;
 };
 
+export const useAppData = () => {
+  // 1. Берем данные из контекста
+  const context = useContext(AppContext);
+
+  // 2. Проверяем, что контекст существует
+  if (!context) {
+    throw new Error("useAppData must be used within AppProvider");
+  }
+
+  // 3. Возвращаем данные
+  return context; // ← { notes, perfumeList, user, isLoading, error }
+};
+
 // ✅ Провайдер
 export const AppProvider = ({
   children,

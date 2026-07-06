@@ -19,7 +19,7 @@ export const TastingScreen = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
 
-  console.log({ notes, perfumeList });
+  // console.log({ notes, perfumeList });
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

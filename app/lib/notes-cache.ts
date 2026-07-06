@@ -1,4 +1,4 @@
-// app/lib/notes-cache.server.ts
+
 interface CacheItem<T> {
   data: T;
   timestamp: number;
@@ -11,13 +11,13 @@ class NotesCache {
   get(key: string): any | null {
     const item = this.cache.get(key);
     if (!item) return null;
-    
+
     const age = (Date.now() - item.timestamp) / 1000;
     if (age > this.ttl) {
       this.cache.delete(key);
       return null;
     }
-    
+
     return item.data;
   }
 
