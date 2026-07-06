@@ -16,4 +16,31 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const supabaseServer = createClient(
     supabaseUrl,
     supabaseServiceKey || supabaseAnonKey
+
 );
+
+
+// ✅ Админ клиент (без RLS) - ТОЛЬКО ДЛЯ СЕРВЕРА!
+export const supabaseAdmin = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+    },
+    db: {
+        schema: 'public',
+    },
+    global: {
+        fetch: (url, options) => {
+            // Увеличиваем таймаут до 30 секунд
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+            return fetch(url, {
+                ...options,
+                signal: controller.signal,
+            }).finally(() => clearTimeout(timeoutId));
+        },
+    },
+});
+
+console.log('✅ Supabase admin client created');

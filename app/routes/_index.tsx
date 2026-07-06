@@ -1,95 +1,163 @@
 // app/routes/_index.tsx
 import { redirect, useLoaderData } from "react-router";
-import { TastingItem } from "../widgets/TastingItem";
-import { supabaseServer } from "../lib/supabase"; // ← относительный путь
-import type { Route } from "./+types/_index";
-// Если getUserId и getUserById лежат в session.server.ts
+import { supabaseAdmin } from "../lib/supabase";
 import { getUserId, getUserById } from "../lib/session.server";
 import { TastingList } from "~/pages/TastingList";
+import { notesCache } from "~/lib/notes-cache.server";
 
-export async function loader({ request }: { request: Request }) {
-  const userId = await getUserId(request);
+// ✅ Функция для загрузки всех нот с пагинацией
+async function getAllNotes() {
+  const cacheKey = "all-notes";
 
-  if (!userId) {
-    throw redirect("/login");
+  // Проверяем кеш
+  const cached = notesCache.get(cacheKey);
+  if (cached) {
+    console.log("✅ Using cached notes:", cached.length);
+    return cached;
   }
 
-  const user = await getUserById(userId);
-  if (!user) {
-    throw redirect("/login");
-  }
+  console.log("🔄 Fetching all notes from database...");
 
-  try {
-    let allNotes: any[] = [];
-    let from = 0;
-    const pageSize = 100; // Загружаем по 1000 за раз
+  let allNotes: any[] = [];
+  let from = 0;
+  const pageSize = 1000;
 
-    let perfumeList = [];
-
-    while (true) {
-      const { data, error } = await supabaseServer
+  while (true) {
+    try {
+      const { data, error } = await supabaseAdmin
         .from("notes")
-        .select("id, name, url, image")
+        .select("id, name, image")
         .order("id", { ascending: true })
         .range(from, from + pageSize - 1);
 
       if (error) {
-        throw new Error(error.message);
+        console.error(`❌ Error fetching notes at offset ${from}:`, error);
+        break;
       }
 
       if (!data || data.length === 0) {
+        console.log(`✅ No more notes at offset ${from}`);
         break;
       }
 
       allNotes = [...allNotes, ...data];
+      console.log(`📊 Loaded ${allNotes.length} notes so far...`);
 
-      // Если получили меньше, чем запросили - значит это последняя страница
       if (data.length < pageSize) {
+        console.log(`✅ Last batch: got ${data.length} notes`);
         break;
       }
 
       from += pageSize;
+    } catch (error) {
+      console.error(`💥 Error fetching notes at offset ${from}:`, error);
+      break;
+    }
+  }
+
+  // Сохраняем в кеш
+  notesCache.set(cacheKey, allNotes);
+  console.log(`✅ Total notes loaded: ${allNotes.length} (cached)`);
+
+  return allNotes;
+}
+
+export async function loader({ request }: { request: Request }) {
+  console.log("🚀 Loader started");
+
+  try {
+    // Проверяем авторизацию
+    const userId = await getUserId(request);
+    if (!userId) {
+      throw redirect("/login");
     }
 
-    const { data, error, status } = await supabaseServer
+    const user = await getUserById(userId);
+    if (!user) {
+      throw redirect("/login");
+    }
+
+    // Загружаем все ноты
+    const allNotes = await getAllNotes();
+
+    // Загружаем perfume-set-1
+    const { data: perfumeData, error: perfumeError } = await supabaseAdmin
       .from("perfume-set-1")
       .select("id, name, perfumer, brand, link, notes")
       .order("id");
 
-    console.log({ data, error, status });
+    if (perfumeError) {
+      console.error("❌ Perfume error:", perfumeError);
+      return {
+        perfumeList: [],
+        notes: allNotes,
+        user,
+        error: `Ошибка загрузки ароматов: ${perfumeError.message}`,
+      };
+    }
+
+    console.log(
+      `✅ Loaded ${perfumeData?.length || 0} perfumes, ${allNotes.length} notes`,
+    );
 
     return {
+      perfumeList: perfumeData || [],
       notes: allNotes,
       user,
       error: null,
-      total: allNotes.length,
-      perfumeList: data,
     };
   } catch (error) {
-    console.error("Error loading notes:", error);
+    console.error("💥 Fatal error:", error);
     return {
+      perfumeList: [],
       notes: [],
-      user,
-      error: "Ошибка загрузки нот. Пожалуйста, попробуйте позже.",
+      user: null,
+      error: error instanceof Error ? error.message : "Неизвестная ошибка",
     };
   }
 }
 
+export const headers = () => ({
+  "Cache-Control": "public, max-age=300",
+});
+
+export const shouldRevalidate = () => false;
+
 export default function Index() {
-  const { user, error } = useLoaderData<{
+  const { user, error, perfumeList, notes } = useLoaderData<{
+    perfumeList: any[];
     notes: any[];
     user: any;
     error: string | null;
-    perfumeList: any[];
   }>();
 
   if (error) {
-    return <div>Ошибка: {error}</div>;
+    return (
+      <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
+        <h2 style={{ color: "red" }}>⚠️ Ошибка загрузки</h2>
+        <p>{error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          style={{
+            padding: "10px 20px",
+            background: "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Попробовать снова
+        </button>
+      </div>
+    );
   }
 
   return (
     <div>
       <p>Добро пожаловать, {user?.name}!</p>
+      <p>Загружено ароматов: {perfumeList?.length || 0}</p>
+      <p>Загружено нот: {notes?.length || 0}</p>
       <TastingList />
     </div>
   );

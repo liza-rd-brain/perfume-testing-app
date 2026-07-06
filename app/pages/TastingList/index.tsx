@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useLoaderData } from "react-router";
 
 export const TastingList = () => {
@@ -7,41 +8,68 @@ export const TastingList = () => {
     error: string | null;
     perfumeList: any[];
   }>();
+
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+
+  if (!perfumeList || perfumeList.length === 0) {
+    return null;
+  }
+
   return (
     <>
-      {!perfumeList || !perfumeList?.length
-        ? null
-        : perfumeList?.map(
-            ({ id, name, perfumer, brand, notes: notesPerfume }: any) => {
-              console.log({ notes: notesPerfume.top });
-              return (
-                <div key={id}>
-                  {name} -{perfumer}-{brand}
-                  <div>
-                    {!notesPerfume.top || !notesPerfume.top.length
-                      ? null
-                      : notesPerfume.top.map((item: any) => {
-                          const itemTest = notes.find(
-                            (note: any) => note.id === item.id,
-                          );
+      {perfumeList.map(
+        ({ id, name, perfumer, brand, notes: notesPerfume }: any) => {
+          const isLoaded = loadedImages.has(id);
 
-                          const image = itemTest?.image || null;
+          console.log({ isLoaded });
 
-                          console.log({ itemTest, image });
+          return (
+            <div key={id}>
+              {name} - {perfumer} - {brand}
+              <div>
+                {notesPerfume?.top &&
+                notesPerfume.top.length > 0 &&
+                notes &&
+                notes.length > 0
+                  ? notesPerfume.top.map((item: any) => {
+                      const itemTest = notes.find(
+                        (note: any) => note.id === item.id,
+                      );
+                      const image = itemTest?.image || null;
 
-                          return (
-                            <div key={item.id}>
-                              <img src={image} />
-                            </div>
-                          );
-                        })}
-                  </div>
-                  {/* {notes.base}
-                {notes.middle} */}
-                </div>
-              );
-            },
-          )}
+                      return (
+                        <div key={item.id}>
+                          {image && (
+                            <img
+                              src={image}
+                              referrerPolicy="no-referrer"
+                              //   loading="lazy"
+                              onLoad={() => {
+                                console.log("loaded");
+                                setLoadedImages((prev) =>
+                                  new Set(prev).add(id),
+                                );
+                              }}
+                              style={{
+                                opacity: isLoaded ? 1 : 0,
+                                transition: "opacity 0.3s ease",
+                                width: "50px",
+                                height: "50px",
+                                objectFit: "cover",
+                                // borderRadius: "50%",
+                              }}
+                            />
+                          )}
+                          <div>{itemTest?.name || item.name}</div>
+                        </div>
+                      );
+                    })
+                  : null}
+              </div>
+            </div>
+          );
+        },
+      )}
     </>
   );
 };
