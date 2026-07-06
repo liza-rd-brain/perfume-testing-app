@@ -6,7 +6,7 @@ import { TastingList } from "~/pages/TastingList";
 import { notesCache } from "~/lib/notes-cache.server";
 
 // ✅ Функция для загрузки всех нот с пагинацией
-async function getAllNotes() {
+export async function getAllNotes() {
   const cacheKey = "all-notes";
 
   // Проверяем кеш
@@ -62,6 +62,20 @@ async function getAllNotes() {
   return allNotes;
 }
 
+export async function getPerfumeList() {
+  // Загружаем perfume-set-1
+  const { data: perfumeData, error: perfumeError } = await supabaseAdmin
+    .from("perfume-set-1")
+    .select("id, name, perfumer, brand, link, notes")
+    .order("id");
+
+  if (perfumeError) {
+    console.error("❌ Perfume error:", perfumeError);
+  }
+
+  return perfumeData;
+}
+
 export async function loader({ request }: { request: Request }) {
   console.log("🚀 Loader started");
 
@@ -80,25 +94,7 @@ export async function loader({ request }: { request: Request }) {
     // Загружаем все ноты
     const allNotes = await getAllNotes();
 
-    // Загружаем perfume-set-1
-    const { data: perfumeData, error: perfumeError } = await supabaseAdmin
-      .from("perfume-set-1")
-      .select("id, name, perfumer, brand, link, notes")
-      .order("id");
-
-    if (perfumeError) {
-      console.error("❌ Perfume error:", perfumeError);
-      return {
-        perfumeList: [],
-        notes: allNotes,
-        user,
-        error: `Ошибка загрузки ароматов: ${perfumeError.message}`,
-      };
-    }
-
-    console.log(
-      `✅ Loaded ${perfumeData?.length || 0} perfumes, ${allNotes.length} notes`,
-    );
+    const perfumeData = await getPerfumeList();
 
     return {
       perfumeList: perfumeData || [],

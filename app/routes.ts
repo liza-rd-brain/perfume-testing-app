@@ -14,5 +14,11 @@ export default [
         path: "/login",
         file: "routes/login.tsx",
     },
+    {
+        path: "/testing/:id",
+        file: "routes/testing.tsx",
+    },
+
+
 
 ] satisfies RouteConfig;
