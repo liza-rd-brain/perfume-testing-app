@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useLoaderData, useRouteLoaderData } from "react-router";
+import styles from "./style.module.css";
+import { NoteList } from "~/components/NoteList";
 
 interface TastingScreenProps {
   notes: Note[];
@@ -16,8 +18,15 @@ export const TastingScreen = () => {
   const notes = rootData?.notes || [];
   const perfumeList = rootData?.perfumeList || [];
 
+  const [noteList, setNoteList] = useState<Note[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
+
+  const addNote = (note: Note) => {
+    setNoteList((prev) => [...prev, note]);
+    setSearchTerm("");
+    setFilteredNotes([]);
+  };
 
   // console.log({ notes, perfumeList });
 
@@ -42,9 +51,15 @@ export const TastingScreen = () => {
 
   return (
     <div className="tasting-board">
-      <h1>Дегустационная доска</h1>
-      <p>Всего нот: {notes?.length || 0}</p>
-
+      {/* <h1>Дегустационная доска</h1>
+      <p>Всего нот: {notes?.length || 0}</p> */}
+      <span>Выбранные ноты</span>
+      <div>
+        <NoteList noteList={noteList} title="Верхние ноты" />
+        {/* {noteList.map((item) => (
+          <span>{item.name}</span>
+        ))} */}
+      </div>
       <div className="search-container">
         <input
           type="text"
@@ -62,21 +77,26 @@ export const TastingScreen = () => {
 
         {filteredNotes.length > 0 && (
           <ul className="notes-list">
-            {filteredNotes.map((note) => (
-              <li key={note.id} className="note-item">
-                <span className="note-name">{note.name}</span>
-                {note.url && (
-                  <a
-                    href={note.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="note-link"
-                  >
-                    🔗
-                  </a>
-                )}
-              </li>
-            ))}
+            {filteredNotes.map((note) => {
+              // console.log({ note });
+
+              return (
+                <li
+                  key={note.id}
+                  className={styles["note-item"]}
+                  onClick={() => addNote(note)}
+                >
+                  <span className="note-name">{note.name}</span>
+                  {note.image && (
+                    <img
+                      src={note.image}
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
+                    />
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
