@@ -10,7 +10,7 @@ export const NoteList = ({
       <div>{title}</div>
       <div>
         {noteList.map((note) => (
-          <>
+          <div key={note.id}>
             <span>{note.name}</span>
             {note.image && (
               <img
@@ -19,7 +19,7 @@ export const NoteList = ({
                 loading="lazy"
               />
             )}
-          </>
+          </div>
         ))}
       </div>
     </div>

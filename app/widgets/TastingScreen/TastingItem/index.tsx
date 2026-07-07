@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLoaderData, useRouteLoaderData } from "react-router";
 import styles from "./style.module.css";
 import { NoteList } from "~/components/NoteList";
+import { supabase } from "~/lib/supabase";
 
 interface TastingScreenProps {
   notes: Note[];
@@ -22,7 +23,34 @@ export const TastingScreen = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
 
-  const addNote = (note: Note) => {
+  const addNote = async (note: Note) => {
+    if (noteList.some((n) => n.id === note.id)) {
+      console.log("Эта нота уже добавлена");
+      return;
+    }
+
+    const userId = localStorage.getItem("userId");
+
+    try {
+      const { data, error } = await supabase.from("user_experience").insert([
+        {
+          user_id: userId,
+          perfume_id: 1, // ID текущего парфюма
+          notes: { middle: [...noteList, note] },
+        },
+      ]);
+
+      if (error) {
+        console.error("Ошибка Supabase:", error);
+        console.log("Ошибка при сохранении");
+      } else {
+        console.log("Впечатления сохранены!");
+        setNoteList([]); // Очищаем список
+      }
+    } catch (error) {
+      console.error("Ошибка:", error);
+      console.log("Не удалось сохранить");
+    }
     setNoteList((prev) => [...prev, note]);
     setSearchTerm("");
     setFilteredNotes([]);
