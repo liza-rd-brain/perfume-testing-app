@@ -11,6 +11,8 @@ import { supabase } from "~/lib/supabase";
 import { useUser } from "~/UserContext";
 import { useAppData } from "~/AppContext";
 import { usePersistedUser } from "~/hooks/usePersistedUser";
+import { loadSavedNotes } from "./loadSavedNotes";
+import { TastingNew } from "./TastingNew";
 
 interface TastingScreenProps {
   notes: Note[];
@@ -34,173 +36,97 @@ async function getSavedNotes(userId: string, perfumeId: number) {
   return data?.notes || null;
 }
 
+// поднять компонент или вообще разббить
+// чтобы не слетали начальны ноты
+
 export const TastingScreen = (props: any) => {
-  const rootData = useRouteLoaderData("root") as {
-    notes?: Note[];
-    perfumeList?: any[];
-  } | null;
+  const [noteList, setNoteList] = useState<Note[]>([]);
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const location = useLocation();
-  console.log({ location });
-
-  const notes = rootData?.notes || [];
-  const perfumeList = rootData?.perfumeList || [];
-
-  const [noteList, setNoteList] = useState<Note[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const userIdLocal = usePersistedUser(location?.state?.id);
 
   const params = useParams(); // ✅ Получаем id из URL
   const perfumeId = parseInt(params.id || "0"); // ✅ ID парфюма из URL
-  console.log({ userIdLocal });
+
   const userId = location?.state?.id || userIdLocal;
 
   // ✅ Загружаем сохраненные ноты при загрузке компонента
   useEffect(() => {
     if (userId && perfumeId) {
-      loadSavedNotes();
+      loadNotes();
     }
-  }, []);
+  }, [userId, perfumeId]);
 
-  const loadSavedNotes = async () => {
-    if (!userId) return;
-
-    setIsLoading(true);
-    try {
-      const { data: userAllData, error: userAllError } = await supabase
-        .from("user_experience")
-        .select("*")
-        .eq("user_id", userId);
-
-      const { data, error } = await supabase
-        .from("user_experience")
-        .select("*")
-        .eq("user_id", userId)
-        .eq("perfume_id", perfumeId);
-
-      // ✅ Если есть данные - берем notes
-      if (data && data.length > 0) {
-        const savedNotes = data
-          .reduce((prev, item) => {
-            return [...prev, ...(item.notes?.middle || [])];
-          }, [])
-          .filter(
-            (note: { id: any }, index: any, self: any[]) =>
-              index === self.findIndex((n) => n.id === note.id),
-          );
-
-        setNoteList(savedNotes);
-        console.log("📝 Загружены сохраненные ноты:", { savedNotes });
-      } else {
-        console.log("📭 Нет сохраненных нот для этого парфюма");
-        setNoteList([]);
-      }
-    } catch (error) {
-      console.error("💥 Ошибка:", error);
-      setNoteList([]);
-    } finally {
-      setIsLoading(false);
-    }
+  const loadNotes = async () => {
+    const savedNotes = await loadSavedNotes({ userId, perfumeId });
+    setNoteList(savedNotes);
   };
 
-  const addNote = async (note: Note) => {
-    if (noteList.some((n) => n.id === note.id)) {
-      console.log("Эта нота уже добавлена");
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase.from("user_experience").insert([
-        {
-          user_id: userId,
-          perfume_id: perfumeId, // ID текущего парфюма
-          notes: { middle: [...noteList, note] },
-        },
-      ]);
-
-      if (error && error !== null) {
-        console.error("Ошибка Supabase:", error);
-        console.log("Ошибка при сохранении");
-      } else {
-        console.log("Впечатления сохранены!");
-        setNoteList([]); // Очищаем список
-      }
-    } catch (error) {
-      console.error("Ошибка:", error);
-      console.log("Не удалось сохранить");
-    }
-    debugger;
-    loadSavedNotes();
-    setSearchTerm("");
-    setFilteredNotes([]);
+  const addNewNotes = (note: any) => {
+    setNoteList((prev) => [...noteList, note]);
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
+  // const loadSavedNotes = async () => {
+  //   if (!userId) return;
 
-    if (!value.trim()) {
-      setFilteredNotes([]);
-      return;
-    }
+  //   setIsLoading(true);
+  //   try {
+  //     const { data: userAllData, error: userAllError } = await supabase
+  //       .from("user_experience")
+  //       .select("*")
+  //       .eq("user_id", userId);
 
-    const results = notes?.filter((note) =>
-      note.name.toLowerCase().includes(value.trim().toLowerCase()),
-    );
-    setFilteredNotes(results);
-  };
+  //     const { data, error } = await supabase
+  //       .from("user_experience")
+  //       .select("*")
+  //       .eq("user_id", userId)
+  //       .eq("perfume_id", perfumeId);
+
+  //     debugger;
+
+  //     // ✅ Если есть данные - берем notes
+  //     if (data && data.length > 0) {
+  //       const savedNotes = data
+  //         .reduce((prev, item) => {
+  //           return [...prev, ...(item.notes?.middle || [])];
+  //         }, [])
+  //         .filter(
+  //           (note: { id: any }, index: any, self: any[]) =>
+  //             index === self.findIndex((n) => n.id === note.id),
+  //         );
+  //       debugger;
+
+  //       setNoteList(savedNotes);
+  //       debugger;
+  //       console.log("📝 Загружены сохраненные ноты:", { savedNotes });
+  //     } else {
+  //       console.log("📭 Нет сохраненных нот для этого парфюма");
+  //       setNoteList([]);
+  //     }
+  //   } catch (error) {
+  //     console.error("💥 Ошибка:", error);
+  //     setNoteList([]);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
     <div className="tasting-board">
-      {/* <h1>Дегустационная доска</h1>
-      <p>Всего нот: {notes?.length || 0}</p> */}
-      <span>Выбранные ноты</span>
       <div>
-        <NoteList noteList={noteList} title="Верхние ноты" />
-        {noteList.map((item) => (
+        <NoteList noteList={noteList} title="Выбранные ноты" />
+        {/* {noteList.map((item) => (
           <span>{item.name}</span>
-        ))}
+        ))} */}
       </div>
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="Поиск по нотам..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className="search-input"
-        />
-      </div>
-
-      <div className="results-container">
-        {searchTerm.trim() && filteredNotes.length === 0 && (
-          <p className="no-results">Ничего не найдено</p>
-        )}
-
-        {filteredNotes.length > 0 && (
-          <ul className="notes-list">
-            {filteredNotes.map((note) => {
-              return (
-                <li
-                  key={note.id}
-                  className={styles["note-item"]}
-                  onClick={() => addNote(note)}
-                >
-                  <span className="note-name">{note.name}</span>
-                  {note.image && (
-                    <img
-                      src={note.image}
-                      referrerPolicy="no-referrer"
-                      loading="lazy"
-                    />
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </div>
+      <TastingNew
+        noteList={noteList}
+        userId={userId}
+        perfumeId={perfumeId}
+        addNewNotes={addNewNotes}
+      />
     </div>
   );
 };

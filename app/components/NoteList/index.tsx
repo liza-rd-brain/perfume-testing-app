@@ -1,3 +1,5 @@
+import styles from "./style.module.css";
+
 export const NoteList = ({
   noteList,
   title,
@@ -8,7 +10,7 @@ export const NoteList = ({
   return (
     <div>
       <div>{title}</div>
-      <div>
+      <div className={styles["note-list"]}>
         {noteList.map((note) => (
           <div key={note.id}>
             <span>{note.name}</span>
