@@ -40,8 +40,13 @@ async function getSavedNotes(userId: string, perfumeId: number) {
 // чтобы не слетали начальны ноты
 
 export const TastingScreen = (props: any) => {
-  const [noteList, setNoteList] = useState<Note[]>([]);
+  const rootData = useRouteLoaderData("root") as {
+    notes?: Note[];
+    perfumeList?: any[];
+  } | null;
+  const notes = rootData?.notes || [];
 
+  const [noteList, setNoteList] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const location = useLocation();
@@ -57,61 +62,17 @@ export const TastingScreen = (props: any) => {
     if (userId && perfumeId) {
       loadNotes();
     }
-  }, [userId, perfumeId]);
+  }, []);
 
   const loadNotes = async () => {
     const savedNotes = await loadSavedNotes({ userId, perfumeId });
+    console.log({ savedNotes });
     setNoteList(savedNotes);
   };
 
   const addNewNotes = (note: any) => {
-    setNoteList((prev) => [...noteList, note]);
+    setNoteList((prev) => [...prev, note]);
   };
-
-  // const loadSavedNotes = async () => {
-  //   if (!userId) return;
-
-  //   setIsLoading(true);
-  //   try {
-  //     const { data: userAllData, error: userAllError } = await supabase
-  //       .from("user_experience")
-  //       .select("*")
-  //       .eq("user_id", userId);
-
-  //     const { data, error } = await supabase
-  //       .from("user_experience")
-  //       .select("*")
-  //       .eq("user_id", userId)
-  //       .eq("perfume_id", perfumeId);
-
-  //     debugger;
-
-  //     // ✅ Если есть данные - берем notes
-  //     if (data && data.length > 0) {
-  //       const savedNotes = data
-  //         .reduce((prev, item) => {
-  //           return [...prev, ...(item.notes?.middle || [])];
-  //         }, [])
-  //         .filter(
-  //           (note: { id: any }, index: any, self: any[]) =>
-  //             index === self.findIndex((n) => n.id === note.id),
-  //         );
-  //       debugger;
-
-  //       setNoteList(savedNotes);
-  //       debugger;
-  //       console.log("📝 Загружены сохраненные ноты:", { savedNotes });
-  //     } else {
-  //       console.log("📭 Нет сохраненных нот для этого парфюма");
-  //       setNoteList([]);
-  //     }
-  //   } catch (error) {
-  //     console.error("💥 Ошибка:", error);
-  //     setNoteList([]);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   return (
     <div className="tasting-board">
@@ -125,6 +86,7 @@ export const TastingScreen = (props: any) => {
         noteList={noteList}
         userId={userId}
         perfumeId={perfumeId}
+        notes={notes}
         addNewNotes={addNewNotes}
       />
     </div>
