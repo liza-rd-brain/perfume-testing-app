@@ -40,8 +40,13 @@ async function getSavedNotes(userId: string, perfumeId: number) {
 // чтобы не слетали начальны ноты
 
 export const TastingScreen = (props: any) => {
-  const [noteList, setNoteList] = useState<Note[]>([]);
+  const rootData = useRouteLoaderData("root") as {
+    notes?: Note[];
+    perfumeList?: any[];
+  } | null;
+  const notes = rootData?.notes || [];
 
+  const [noteList, setNoteList] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const location = useLocation();
@@ -61,6 +66,8 @@ export const TastingScreen = (props: any) => {
 
   const loadNotes = async () => {
     const savedNotes = await loadSavedNotes({ userId, perfumeId });
+
+    console.log({ savedNotes });
     setNoteList(savedNotes);
   };
 
@@ -125,6 +132,7 @@ export const TastingScreen = (props: any) => {
         noteList={noteList}
         userId={userId}
         perfumeId={perfumeId}
+        notes={notes}
         addNewNotes={addNewNotes}
       />
     </div>

@@ -22,14 +22,17 @@ export const loadSavedNotes = async ({ userId, perfumeId }: { userId: number, pe
 
         // ✅ Если есть данные - берем notes
         if (data && data.length > 0) {
+
+
+            console.log({ data })
             const savedNotes = data
                 .reduce((prev, item) => {
                     return [...prev, ...(item.notes?.middle || [])];
                 }, [])
-                .filter(
-                    (note: { id: any }, index: any, self: any[]) =>
-                        index === self.findIndex((n) => n.id === note.id),
-                );
+            // .filter(
+            //     (note: { id: any }, index: any, self: any[]) =>
+            //         index === self.findIndex((n) => n.id === note.id),
+            // );
             debugger;
 
             return savedNotes

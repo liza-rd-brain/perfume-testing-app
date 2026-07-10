@@ -9,25 +9,21 @@ export const TastingNew = ({
   userId,
   perfumeId,
   addNewNotes,
+  notes,
 }: {
   noteList: any;
   userId: number;
   perfumeId: number;
+  notes: any;
   addNewNotes: (note: any) => void;
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
 
-  const rootData = useRouteLoaderData("root") as {
-    notes?: Note[];
-    perfumeList?: any[];
-  } | null;
-
   const location = useLocation();
   console.log({ location });
 
-  const notes = rootData?.notes || [];
-  const perfumeList = rootData?.perfumeList || [];
+  //   const perfumeList = rootData?.perfumeList || [];
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -38,7 +34,7 @@ export const TastingNew = ({
       return;
     }
 
-    const results = notes?.filter((note) =>
+    const results = notes?.filter((note: { name: string }) =>
       note.name.toLowerCase().includes(value.trim().toLowerCase()),
     );
     setFilteredNotes(results);
@@ -55,7 +51,7 @@ export const TastingNew = ({
         {
           user_id: userId,
           perfume_id: perfumeId, // ID текущего парфюма
-          notes: { middle: [...noteList, note] },
+          notes: { middle: [note.id] },
         },
       ]);
 
@@ -70,7 +66,7 @@ export const TastingNew = ({
       console.error("Ошибка:", error);
       console.log("Не удалось сохранить");
     }
-    addNewNotes(note);
+    addNewNotes(note.id);
     loadSavedNotes({ userId, perfumeId });
     setSearchTerm("");
     setFilteredNotes([]);
