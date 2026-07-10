@@ -80,3 +80,9 @@
     color: #6b6560;
     padding: 40px 0;
 }
+
+.search-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px
+}

@@ -1,5 +1,6 @@
 import { useRouteLoaderData } from "react-router";
 import styles from "./style.module.css";
+import type { Note } from "~/types";
 
 export const NoteList = ({
   noteList,
@@ -15,7 +16,7 @@ export const NoteList = ({
   const notes = rootData?.notes || [];
 
   const noteData = noteList.map((id) => notes?.find((note) => note.id === id));
-noteList
+  noteList;
   console.log({ noteData, noteList });
 
   return (
@@ -23,9 +24,9 @@ noteList
       <div>{title}</div>
       <div className={styles["note-list"]}>
         {noteData.map((note) => (
-          <div key={note.id}>
-            <span>{note.name}</span>
-            {note.image && (
+          <div key={note?.id}>
+            <span>{note?.name}</span>
+            {note?.image && (
               <img
                 src={note.image}
                 referrerPolicy="no-referrer"

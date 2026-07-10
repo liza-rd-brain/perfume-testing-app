@@ -13,6 +13,7 @@ import { useAppData } from "~/AppContext";
 import { usePersistedUser } from "~/hooks/usePersistedUser";
 import { loadSavedNotes } from "./loadSavedNotes";
 import { TastingNew } from "./TastingNew";
+import type { Base, Note } from "~/types";
 
 interface TastingScreenProps {
   notes: Note[];
@@ -46,7 +47,11 @@ export const TastingScreen = (props: any) => {
   } | null;
   const notes = rootData?.notes || [];
 
-  const [noteList, setNoteList] = useState<number[]>([]);
+  const [noteList, setNoteList] = useState<{
+    top: number[];
+    base: number[];
+    middle: [];
+  }>({ top: [], base: [], middle: [] });
   const [isLoading, setIsLoading] = useState(true);
 
   const location = useLocation();
@@ -67,17 +72,38 @@ export const TastingScreen = (props: any) => {
   const loadNotes = async () => {
     const savedNotes = await loadSavedNotes({ userId, perfumeId });
     console.log({ savedNotes });
-    setNoteList(savedNotes);
+    setNoteList({
+      top: savedNotes?.top || [],
+      base: savedNotes?.base || [],
+      middle: savedNotes?.middle || [],
+    });
   };
 
-  const addNewNotes = (note: any) => {
-    setNoteList((prev) => [...prev, note]);
+  const addNewNotes = ({ note, type }: { note: any; type: Base }) => {
+    debugger;
+    setNoteList((prev) => ({
+      ...prev,
+      [type]: [...(prev[type] || []), note],
+    }));
   };
-
   return (
     <div className="tasting-board">
       <div>
-        <NoteList noteList={noteList} title="Выбранные ноты" />
+        <NoteList
+          // type={Base.TOP}
+          noteList={noteList.top}
+          title="Выбранные ноты"
+        />
+        <NoteList
+          // type={Base.MIDDLE}
+          noteList={noteList.middle}
+          title="Выбранные ноты"
+        />
+        <NoteList
+          // type={Base.BASE}
+          noteList={noteList.base}
+          title="Выбранные ноты"
+        />
         {/* {noteList.map((item) => (
           <span>{item.name}</span>
         ))} */}
