@@ -16,6 +16,7 @@ export async function loader({ request }: { request: Request }) {
 
   // Если кука tutorial_done есть - редирект на главную
   if (cookieHeader?.includes("tutorialSkipped=true")) {
+    
     console.log("скипнуть туториал");
     // return redirect("/");
   }
