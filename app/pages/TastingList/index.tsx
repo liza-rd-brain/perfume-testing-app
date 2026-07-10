@@ -39,10 +39,10 @@ export const TastingList = ({ user }: any) => {
             );
           },
         )}
-        <button className={styles.button} onClick={goToRandom}>
-          рандомный
-        </button>
       </div>
+      <button className={`${styles.button}`} onClick={goToRandom}>
+        рандомный
+      </button>
     </>
   );
 };

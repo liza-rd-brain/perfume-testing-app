@@ -54,7 +54,7 @@ export default function Tutorial() {
         обкатывания на подопытном тебе.
         {/* <span style={{ color: "green" }}>добавить разворачивающуюся часть</span> */}
       </div>
-      <details ref={openDetail} open={open} onClick={changeOpen}>
+      <details  className={styles.details}ref={openDetail} open={open} onClick={changeOpen}>
         <summary>
           Инструкция
           <p className={styles["sub-text"]}>
@@ -70,7 +70,7 @@ export default function Tutorial() {
           парфюме будет кнопка посмотреть результаты.
           <br /> Ноты взяты по большей части с сайта fragrantica и могут быть
           неточными.
-          <div className=""></div>
+         
         </p>
       </details>
       <Form method="post" className={styles.bottom}>

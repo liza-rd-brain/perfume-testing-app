@@ -92,17 +92,17 @@ export const TastingScreen = (props: any) => {
         <NoteList
           // type={Base.TOP}
           noteList={noteList.top}
-          title="Выбранные ноты"
+          title="Выбранные ноты верх"
         />
         <NoteList
           // type={Base.MIDDLE}
           noteList={noteList.middle}
-          title="Выбранные ноты"
+          title="Выбранные ноты середина"
         />
         <NoteList
           // type={Base.BASE}
           noteList={noteList.base}
-          title="Выбранные ноты"
+          title="Выбранные ноты база"
         />
         {/* {noteList.map((item) => (
           <span>{item.name}</span>
