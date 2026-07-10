@@ -52,7 +52,7 @@ export const TastingScreen = (props: any) => {
 
   const params = useParams(); // ✅ Получаем id из URL
   const perfumeId = parseInt(params.id || "0"); // ✅ ID парфюма из URL
-  console.log(filteredNotes);
+  console.log({ params });
   const userId = location.state.id;
 
   // ✅ Загружаем сохраненные ноты при загрузке компонента
@@ -97,9 +97,17 @@ export const TastingScreen = (props: any) => {
 
       // ✅ Если есть данные - берем notes
       if (data && data.length > 0) {
-        const savedNotes = data[0].notes?.middle || [];
+        const savedNotes = data
+          .reduce((prev, item) => {
+            return [...prev, ...(item.notes?.middle || [])];
+          }, [])
+          .filter(
+            (note: { id: any; }, index: any, self: any[]) =>
+              index === self.findIndex((n) => n.id === note.id),
+          );
+
         setNoteList(savedNotes);
-        console.log("📝 Загружены сохраненные ноты:", savedNotes);
+        console.log("📝 Загружены сохраненные ноты:", { savedNotes });
       } else {
         console.log("📭 Нет сохраненных нот для этого парфюма");
         setNoteList([]);
@@ -124,15 +132,16 @@ export const TastingScreen = (props: any) => {
       const { data, error } = await supabase.from("user_experience").insert([
         {
           user_id: userId,
-          perfume_id: 1, // ID текущего парфюма
+          perfume_id: perfumeId, // ID текущего парфюма
           notes: { middle: [...noteList, note] },
         },
       ]);
 
-      if (error) {
+      if (error && error !== null) {
         console.error("Ошибка Supabase:", error);
         console.log("Ошибка при сохранении");
       } else {
+        debugger;
         console.log("Впечатления сохранены!");
         setNoteList([]); // Очищаем список
       }
@@ -140,12 +149,11 @@ export const TastingScreen = (props: any) => {
       console.error("Ошибка:", error);
       console.log("Не удалось сохранить");
     }
+    debugger;
     setNoteList((prev) => [...prev, note]);
     setSearchTerm("");
     setFilteredNotes([]);
   };
-
-  // console.log({ notes, perfumeList });
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -195,8 +203,6 @@ export const TastingScreen = (props: any) => {
         {filteredNotes.length > 0 && (
           <ul className="notes-list">
             {filteredNotes.map((note) => {
-              // console.log({ note });
-
               return (
                 <li
                   key={note.id}
