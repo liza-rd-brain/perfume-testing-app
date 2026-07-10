@@ -11,16 +11,21 @@ export const TastingNew = ({
   perfumeId,
   addNewNotes,
   notes,
+  type,
+  activeType,
+  changeActiveType,
 }: {
   noteList: any;
   userId: number;
   perfumeId: number;
   notes: any;
+  type: Base;
+  activeType: Base;
   addNewNotes: (note: any) => void;
+  changeActiveType: (type: Base) => void;
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
-  const [activeType, setActiveType] = useState(Base.BASE);
 
   const location = useLocation();
   console.log({ location });
@@ -34,6 +39,7 @@ export const TastingNew = ({
     e: React.ChangeEvent<HTMLInputElement>;
     activeType: Base;
   }) => {
+    e.stopPropagation();
     const value = e.target.value;
     setSearchTerm(value);
 
@@ -48,53 +54,81 @@ export const TastingNew = ({
     setFilteredNotes(results);
   };
 
-  const addNote = async ({ note, type }: { note: Note; type: string }) => {
-    console.log({ type });
-    debugger;
-    if (noteList[type].some((n: { id: number }) => n?.id === note?.id)) {
-      console.log("Эта нота уже добавлена");
-      return;
-    }
+  const addNote = async ({
+    note,
+    type,
+    e,
+  }: {
+    note: Note;
+    type: string;
+    e: React.MouseEvent<HTMLLIElement, MouseEvent>;
+  }) => {
+    e.stopPropagation();
 
     try {
-      const { data, error } = await supabase.from("user_experience").insert([
+      // 1. Получаем существующую запись (если есть)
+      const { data: existing } = await supabase
+        .from("user_experience")
+        .select("notes")
+        .eq("user_id", userId)
+        .eq("perfume_id", perfumeId)
+        .maybeSingle();
+
+      // 2. Готовим данные для сохранения
+      const currentNotes = existing?.notes || {};
+      const updatedNotes = {
+        ...currentNotes,
+        [type]: [...(currentNotes[type] || []), note.id],
+      };
+
+      // 3. UPSERT - если есть - обновит, если нет - создаст
+      const { error } = await supabase.from("user_experience").upsert(
         {
           user_id: userId,
-          perfume_id: perfumeId, // ID текущего парфюма
-          notes: { [type]: [note.id] },
+          perfume_id: perfumeId,
+          notes: updatedNotes,
         },
-      ]);
+        {
+          onConflict: "user_id, perfume_id", // ✅ Теперь работает!
+        },
+      );
 
-      if (error && error !== null) {
-        console.error("Ошибка Supabase:", error);
-        console.log("Ошибка при сохранении");
-      } else {
-        console.log("Впечатления сохранены!");
-        // setNoteList([]); // Очищаем список
-      }
+      if (error) throw error;
+
+      console.log("✅ Сохранено!", existing ? "Обновлено" : "Создано");
+      addNewNotes({ id: note.id, type });
+      setSearchTerm("");
+      setFilteredNotes([]);
     } catch (error) {
       console.error("Ошибка:", error);
-      console.log("Не удалось сохранить");
+      alert("Не удалось сохранить");
     }
-    addNewNotes({ note: note.id, type });
     setSearchTerm("");
     setFilteredNotes([]);
   };
 
-  const SearchItem = ({ title, type }: { title: string; type: string }) => {
+  const handleFocus = (
+    e: React.FocusEvent<HTMLInputElement, Element>,
+    type: Base,
+  ) => {
+    e.stopPropagation();
+    changeActiveType(type as Base);
+  };
+
+  const SearchItem = ({ type }: { type: string }) => {
     console.log({ activeType });
     return (
       <>
-        <span>{title}</span>
-        <div className="search-container">
+        <div className={styles["search-container"]}>
           <input
+            id={type}
             autoFocus={type === activeType}
             type="text"
-            placeholder="Поиск по нотам..."
+            placeholder={`Поиск по ${type === Base.TOP ? "верхним" : type === Base.MIDDLE ? "средним" : "базовым"} нотам ...`}
             value={activeType === type ? searchTerm : undefined}
             onChange={(e) => handleSearchChange({ e, activeType })}
             className="search-input"
-            onFocus={() => setActiveType(type as Base)}
+            onFocus={(e) => handleFocus(e, type as Base)}
           />
         </div>
         <div className="results-container">
@@ -109,7 +143,7 @@ export const TastingNew = ({
                   <li
                     key={note.id}
                     className={styles["note-item"]}
-                    onClick={() => addNote({ note, type })}
+                    onClick={(e) => addNote({ note, type, e })}
                   >
                     <span className="note-name">{note.name}</span>
                     {note.image && (
@@ -128,11 +162,20 @@ export const TastingNew = ({
       </>
     );
   };
-  return (
-    <div className={styles["search-panel"]}>
-      <SearchItem type={Base.TOP} title="верхние ноты"></SearchItem>
-      <SearchItem type={Base.MIDDLE} title="cредние ноты"></SearchItem>
-      <SearchItem type={Base.BASE} title="базовые ноты"></SearchItem>
-    </div>
-  );
+
+  const getType = (type: Base) => {
+    switch (type) {
+      case Base.TOP: {
+        return <SearchItem type={Base.TOP}></SearchItem>;
+      }
+      case Base.MIDDLE: {
+        return <SearchItem type={Base.MIDDLE}></SearchItem>;
+      }
+      case Base.BASE: {
+        return <SearchItem type={Base.BASE}></SearchItem>;
+      }
+    }
+  };
+
+  return <div className={styles["search-panel"]}>{getType(type)}</div>;
 };

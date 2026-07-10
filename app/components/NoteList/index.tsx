@@ -19,13 +19,14 @@ export const NoteList = ({
   noteList;
   console.log({ noteData, noteList });
 
+  const deleteNote = (noteId?: number) => {};
+
   return (
-    <div>
-      <div>{title}</div>
+    <div className={styles["note-saved"]}>
+      <div className={styles["note-title"]}>{title}</div>
       <div className={styles["note-list"]}>
-        {noteData.map((note) => (
-          <div key={note?.id}>
-            <span>{note?.name}</span>
+        {noteData.map((note, index) => (
+          <div key={index} className={styles["note-row"]}>
             {note?.image && (
               <img
                 src={note.image}
@@ -33,6 +34,13 @@ export const NoteList = ({
                 loading="lazy"
               />
             )}
+            <span className={styles["delete-button"]}> ✕</span>
+            <button
+              className={styles["note-text"]}
+              onClick={() => deleteNote(note?.id)}
+            >
+              {note?.name}
+            </button>
           </div>
         ))}
       </div>

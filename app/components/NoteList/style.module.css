@@ -1,4 +1,49 @@
 .note-list {
     display: flex;
-    gap: 10px
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: wrap;
+
+}
+
+.note-text {
+    overflow-wrap: normal;
+    word-break: break-word;
+    display: flex;
+    align-items: end;
+    /* max-width: 70%; */
+
+}
+
+.note-row {
+    display: flex;
+    position: relative;
+    border: 1px solid #80808054;
+    border-radius: 5px;
+    padding: 5px;
+
+    gap: 5px;
+
+    >* {
+        pointer-events: none
+    }
+}
+
+.delete-button {
+    position: absolute;
+    top: 0;
+    right: 3px;
+    color: #987a7a
+}
+
+.note-saved {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+
+    margin-top: 20px;
+
+
+
 }

@@ -42,9 +42,18 @@ export default function Testing(props: any) {
   }
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      <h1>Тестирование аромата #{id}</h1>
-      <p>
+    <div
+      style={{
+        padding: "20px",
+        maxWidth: "800px",
+        margin: "0 5px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "20px",
+      }}
+    >
+      <h1 style={{ fontWeight: "bolder" }}>Тестирование аромата №{id}</h1>
+      {/* <p>
         <strong>Название:</strong> {perfume.name}
       </p>
       <p>
@@ -52,13 +61,13 @@ export default function Testing(props: any) {
       </p>
       <p>
         <strong>Бренд:</strong> {perfume.brand}
-      </p>
+      </p> */}
 
-      {perfume.link && (
+      {/* {perfume.link && (
         <a href={perfume.link} target="_blank" rel="noopener noreferrer">
           Подробнее на Fragrantica
         </a>
-      )}
+      )} */}
 
       {/* ✅ Передаем данные в TastingScreen */}
       <TastingScreen />

@@ -1,12 +1,21 @@
 .tasting-board {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
+    >* {
+        border-top: 1px solid black;
+        border-radius: none;
+    }
+
+    ;
+
+    >last-child {
+        border-bottom: none;
+    }
 }
 
 .search-container {
     position: relative;
     margin-bottom: 20px;
+    margin-top: 20px;
+    line-height: 40px;
 }
 
 .search-input {
@@ -17,6 +26,7 @@
     border-radius: 12px;
     background: #faf8f6;
     transition: border-color 0.2s;
+
 }
 
 .search-input:focus {
@@ -84,5 +94,9 @@
 .search-panel {
     display: flex;
     flex-direction: column;
-    gap: 20px
+
+}
+
+.tasting-type {
+    opacity: 0.7;
 }
