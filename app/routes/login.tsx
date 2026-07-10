@@ -45,7 +45,7 @@ export default function Login() {
 
   return (
     <div className={styles["page-layout"]}>
-      <img src="./public/perfume.gif" className={styles.img}></img>
+      <img src="/perfume.gif" className={styles.img}></img>
       <Form method="post" className={styles["login-form"]}>
         <input type="password" name="password" placeholder="Пароль" autoFocus />
         {actionData?.error && <p className="error">{actionData.error}</p>}

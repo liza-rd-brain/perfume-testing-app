@@ -5,6 +5,10 @@ import path from "path";
 
 export default defineConfig({
   plugins: [reactRouter()],
+  css: {
+    postcss: './postcss.config.js',
+  },
+  base: '/',
   resolve: {
     alias: {
       "~": path.resolve(__dirname, "./app"),
