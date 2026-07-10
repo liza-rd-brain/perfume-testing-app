@@ -9,7 +9,6 @@ import {
 import "./app.css";
 import { getAllNotes, getPerfumeList } from "./routes/_index";
 import { AppProvider } from "./context/AppContext";
-import { ThemeProvider } from "./context/ThemeContext";
 
 export async function loader() {
   console.log("🔄 ===== ROOT LOADER ===== (ТОЛЬКО 1 РАЗ!)");
@@ -40,9 +39,7 @@ export default function Root() {
       </head>
       <body>
         <AppProvider value={{ notes, perfumeList, user }}>
-          <ThemeProvider>
-            <Outlet />
-          </ThemeProvider>
+          <Outlet />
         </AppProvider>
         <ScrollRestoration />
         <Scripts />

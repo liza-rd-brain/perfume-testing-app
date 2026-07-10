@@ -153,3 +153,7 @@
         opacity: 1;
     }
 }
+
+.login-overlay {
+    margin: 20px;
+}

@@ -4,6 +4,7 @@ import { Form, useActionData, redirect } from "react-router";
 import { createUserSession, getUserId } from "~/lib/session.server";
 import type { Route } from "./+types/login";
 import { verifyPassword } from "../lib/session.server";
+import styles from "./login.module.css";
 
 export async function loader({ request }: Route.LoaderArgs) {
   // Если уже авторизован — на главную
@@ -44,12 +45,14 @@ export default function Login() {
   const actionData = useActionData<{ error?: string }>();
 
   return (
-    <div className="login-page">
-      <h1>Введите пароль</h1>
-      <Form method="post">
+    <div className={styles["login-page"]}>
+      <img src="./public/perfume.gif" className={styles.img}></img>
+      <Form method="post" className={styles["login-form"]}>
         <input type="password" name="password" placeholder="Пароль" autoFocus />
         {actionData?.error && <p className="error">{actionData.error}</p>}
-        <button type="submit">Войти</button>
+        <button type="submit" className={styles.submit}>
+          Войти
+        </button>
       </Form>
     </div>
   );
