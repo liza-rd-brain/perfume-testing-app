@@ -3,9 +3,11 @@ import { NavLink } from "react-router"; // ← Убрали useLoaderData
 import styles from "./style.module.css";
 import { useAppData } from "~/context/AppContext"; // ← Добавили!
 
-export const TastingList = () => {
+export const TastingList = ({ user }: any) => {
   // ✅ Используем контекст вместо useLoaderData!
   const { notes, perfumeList } = useAppData();
+
+  console.log({ user }, "TastingList");
 
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
 
@@ -23,9 +25,7 @@ export const TastingList = () => {
               // ✅ Убрали двоеточие!
               to={`/testing/${id}`}
               className={styles.testingItem}
-              state={{
-                perfume: { id, name, perfumer, brand, notes: notesPerfume },
-              }}
+              state={user}
             >
               {id}
             </NavLink>

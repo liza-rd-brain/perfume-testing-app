@@ -20,7 +20,7 @@ export async function loader() {
 }
 
 export default function Root() {
-  const { notes, perfumeList } = useLoaderData();
+  const { notes, perfumeList, user } = useLoaderData();
   return (
     <html lang="ru">
       <head>
@@ -38,7 +38,7 @@ export default function Root() {
         ></link>
       </head>
       <body>
-        <AppProvider value={{ notes, perfumeList }}>
+        <AppProvider value={{ notes, perfumeList, user }}>
           <Outlet />
         </AppProvider>
         <ScrollRestoration />

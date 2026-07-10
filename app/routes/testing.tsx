@@ -1,16 +1,18 @@
 // app/routes/testing.tsx
-import { useLocation, useParams } from "react-router";
+import { useLoaderData, useLocation, useParams } from "react-router";
 import { TastingScreen } from "~/widgets/TastingScreen/TastingItem";
 import { useAppData } from "~/context/AppContext"; // ← Добавить!
 
 // ❌ НЕТ loader!
 
-export default function Testing() {
+export default function Testing(props: any) {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
 
+  console.log({ props });
+
   // ✅ Получаем данные из контекста (запасной вариант)
-  const { perfumeList, notes } = useAppData();
+  const { perfumeList, notes, user } = useAppData();
 
   // ✅ 1. Сначала из state (переданные через NavLink)
   const perfumeFromState = location.state?.perfume;

@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { useLoaderData, useRouteLoaderData } from "react-router";
+import { useLoaderData, useLocation, useRouteLoaderData } from "react-router";
 import styles from "./style.module.css";
 import { NoteList } from "~/components/NoteList";
 import { supabase } from "~/lib/supabase";
+import { useUser } from "~/UserContext";
+import { useAppData } from "~/AppContext";
 
 interface TastingScreenProps {
   notes: Note[];
@@ -10,11 +12,14 @@ interface TastingScreenProps {
   perfumeList: any;
 }
 
-export const TastingScreen = () => {
+export const TastingScreen = (props: any) => {
   const rootData = useRouteLoaderData("root") as {
     notes?: Note[];
     perfumeList?: any[];
   } | null;
+
+  const location = useLocation();
+  console.log({ location });
 
   const notes = rootData?.notes || [];
   const perfumeList = rootData?.perfumeList || [];
@@ -23,13 +28,17 @@ export const TastingScreen = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
 
+  console.log(filteredNotes);
+
   const addNote = async (note: Note) => {
     if (noteList.some((n) => n.id === note.id)) {
       console.log("Эта нота уже добавлена");
       return;
     }
 
-    const userId = localStorage.getItem("userId");
+    const userId = location.state.id;
+
+    console.log({ userId });
 
     try {
       const { data, error } = await supabase.from("user_experience").insert([
@@ -84,9 +93,9 @@ export const TastingScreen = () => {
       <span>Выбранные ноты</span>
       <div>
         <NoteList noteList={noteList} title="Верхние ноты" />
-        {/* {noteList.map((item) => (
+        {noteList.map((item) => (
           <span>{item.name}</span>
-        ))} */}
+        ))}
       </div>
       <div className="search-container">
         <input

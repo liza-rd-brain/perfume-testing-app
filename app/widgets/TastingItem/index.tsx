@@ -15,6 +15,7 @@ export const TastingItem = ({
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
 
   console.log({ perfumeList });
+  console.log(filteredNotes);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
