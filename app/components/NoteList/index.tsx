@@ -1,13 +1,15 @@
 import { useRouteLoaderData } from "react-router";
 import styles from "./style.module.css";
-import type { Note } from "~/types";
+import type { Base, Note } from "~/types";
 
 export const NoteList = ({
   noteList,
   title,
+  removeNote,
 }: {
   noteList: number[];
   title: string;
+  removeNote: (noteId: number) => void;
 }) => {
   const rootData = useRouteLoaderData("root") as {
     notes?: Note[];
@@ -19,7 +21,9 @@ export const NoteList = ({
   noteList;
   console.log({ noteData, noteList });
 
-  const deleteNote = (noteId?: number) => {};
+  const deleteNote = (noteId: number) => {
+    removeNote(noteId);
+  };
 
   return (
     <div className={styles["note-saved"]}>
@@ -34,13 +38,14 @@ export const NoteList = ({
                 loading="lazy"
               />
             )}
-            <span className={styles["delete-button"]}> ✕</span>
             <button
-              className={styles["note-text"]}
-              onClick={() => deleteNote(note?.id)}
+              className={styles["delete-button"]}
+              onClick={() => deleteNote(note?.id || 0)}
             >
-              {note?.name}
+              {" "}
+              ✕
             </button>
+            <div className={styles["note-text"]}>{note?.name}</div>
           </div>
         ))}
       </div>

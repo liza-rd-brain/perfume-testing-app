@@ -93,7 +93,84 @@ export const TastingScreen = (props: any) => {
     setActiveType(type);
   };
 
+  const removeNote = async ({
+    noteId,
+    type,
+  }: {
+    noteId: number;
+    type: Base;
+  }) => {
+    try {
+      // 1. Получаем существующую запись
+      const { data: existing } = await supabase
+        .from("user_experience")
+        .select("notes")
+        .eq("user_id", userId)
+        .eq("perfume_id", perfumeId)
+        .maybeSingle();
+
+      if (!existing) {
+        console.log("Запись не найдена");
+        return;
+      }
+      debugger;
+      // 2. Удаляем note.id из массива
+      const currentNotes = existing.notes || {};
+      const updatedNotes = {
+        ...currentNotes,
+        [type]: currentNotes[type]?.filter((id: number) => id !== noteId) || [],
+      };
+
+      // 3. Если массив стал пустым - удаляем поле целиком
+      if (updatedNotes[type]?.length === 0) {
+        delete updatedNotes[type];
+      }
+
+      // 4. Если объект notes стал пустым - удаляем всю запись?
+      if (Object.keys(updatedNotes).length === 0) {
+        // Вариант А: Удалить всю запись
+        const { error } = await supabase
+          .from("user_experience")
+          .delete()
+          .eq("user_id", userId)
+          .eq("perfume_id", perfumeId);
+
+        if (error) throw error;
+
+        console.log("✅ Запись полностью удалена");
+      } else {
+        // Вариант Б: Обновить с удаленной нотой
+        const { error } = await supabase
+          .from("user_experience")
+          .update({ notes: updatedNotes })
+          .eq("user_id", userId)
+          .eq("perfume_id", perfumeId);
+
+        debugger;
+
+        setNoteList((prev) => ({
+          ...prev,
+          [type]: prev[type]?.filter((id: number) => id !== noteId) || [],
+        }));
+
+        if (error) throw error;
+
+        console.log("✅ Нота удалена");
+      }
+
+      // // 5. Обновляем локальное состояние
+      // removeLocalNote({ id: noteId, type });
+    } catch (error) {
+      console.error("Ошибка при удалении:", error);
+      alert("Не удалось удалить ноту");
+    }
+  };
+
   console.log({ activeType });
+
+  const handleRemove = (type: Base) => (noteId: number) => {
+    removeNote({ noteId, type });
+  };
   return (
     <div className={styles["tasting-board"]}>
       <div
@@ -105,6 +182,7 @@ export const TastingScreen = (props: any) => {
           // type={Base.TOP}
           noteList={noteList.top}
           title="Верхние ноты"
+          removeNote={handleRemove(Base.TOP)}
         />
         <TastingNew
           activeType={activeType}
@@ -124,6 +202,7 @@ export const TastingScreen = (props: any) => {
           // type={Base.MIDDLE}
           noteList={noteList.middle}
           title="Средние ноты"
+          removeNote={handleRemove(Base.MIDDLE)}
         />
         <TastingNew
           activeType={activeType}
@@ -143,6 +222,7 @@ export const TastingScreen = (props: any) => {
           // type={Base.BASE}
           noteList={noteList.base}
           title="Базовые ноты"
+          removeNote={handleRemove(Base.BASE)}
         />
         <TastingNew
           activeType={activeType}

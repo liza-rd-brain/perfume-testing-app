@@ -24,16 +24,17 @@
 
     gap: 5px;
 
-    >* {
+    /* >* {
         pointer-events: none
-    }
+    } */
 }
 
 .delete-button {
     position: absolute;
     top: 0;
     right: 3px;
-    color: #987a7a
+    color: #987a7a;
+    pointer-events: all
 }
 
 .note-saved {
