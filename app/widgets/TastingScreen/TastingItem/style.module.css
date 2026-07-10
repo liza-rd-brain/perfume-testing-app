@@ -98,5 +98,12 @@
 }
 
 .tasting-type {
-    opacity: 0.7;
+    input {
+        background-color: rgb(102 216 216 / 40%);
+        border-radius: 5px;
+        padding-left: 20px;
+        width: 100%;
+
+    }
+
 }

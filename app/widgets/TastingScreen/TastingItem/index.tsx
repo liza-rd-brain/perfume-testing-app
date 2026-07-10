@@ -121,10 +121,7 @@ export const TastingScreen = (props: any) => {
         [type]: currentNotes[type]?.filter((id: number) => id !== noteId) || [],
       };
 
-      // 3. Если массив стал пустым - удаляем поле целиком
-      if (updatedNotes[type]?.length === 0) {
-        delete updatedNotes[type];
-      }
+    
 
       // 4. Если объект notes стал пустым - удаляем всю запись?
       if (Object.keys(updatedNotes).length === 0) {
@@ -171,11 +168,11 @@ export const TastingScreen = (props: any) => {
   const handleRemove = (type: Base) => (noteId: number) => {
     removeNote({ noteId, type });
   };
-  return (
+return (
     <div className={styles["tasting-board"]}>
       <div
         className={`
-        ${activeType !== Base.TOP ? styles["tasting-type"] : undefined} 
+        ${activeType === Base.TOP ? styles["tasting-type"] : undefined} 
         ${styles["tasting-container"]}`}
       >
         <NoteList
@@ -196,7 +193,7 @@ export const TastingScreen = (props: any) => {
         />
       </div>
       <div
-        className={`${activeType !== Base.MIDDLE ? styles["tasting-type"] : undefined}`}
+        className={`${activeType === Base.MIDDLE ? styles["tasting-type"] : undefined}`}
       >
         <NoteList
           // type={Base.MIDDLE}
@@ -216,7 +213,7 @@ export const TastingScreen = (props: any) => {
         />
       </div>
       <div
-        className={`${activeType !== Base.BASE ? styles["tasting-type"] : undefined}`}
+        className={`${activeType === Base.BASE ? styles["tasting-type"] : undefined}`}
       >
         <NoteList
           // type={Base.BASE}
