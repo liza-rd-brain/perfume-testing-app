@@ -69,26 +69,16 @@ export const TastingScreen = (props: any) => {
 
     setIsLoading(true);
     try {
-      // ✅ Сначала пробуем найти любую запись для этого пользователя
-      console.log("📡 Запрос 1: Ищем все записи пользователя");
       const { data: userAllData, error: userAllError } = await supabase
         .from("user_experience")
         .select("*")
         .eq("user_id", userId);
 
-      console.log("📦 Все записи пользователя:", userAllData);
-      console.log("❌ Ошибка:", userAllError);
-
-      // ✅ Пробуем найти запись для этого пользователя и парфюма
-      console.log("📡 Запрос 2: Ищем запись для пользователя и парфюма");
       const { data, error } = await supabase
         .from("user_experience")
         .select("*")
         .eq("user_id", userId)
         .eq("perfume_id", perfumeId);
-
-      console.log("📦 Запись для пользователя и парфюма:", data);
-      console.log("❌ Ошибка:", error);
 
       // ✅ Если есть данные - берем notes
       if (data && data.length > 0) {
@@ -121,8 +111,6 @@ export const TastingScreen = (props: any) => {
       return;
     }
 
-    console.log({ userId });
-
     try {
       const { data, error } = await supabase.from("user_experience").insert([
         {
@@ -136,7 +124,6 @@ export const TastingScreen = (props: any) => {
         console.error("Ошибка Supabase:", error);
         console.log("Ошибка при сохранении");
       } else {
-        debugger;
         console.log("Впечатления сохранены!");
         setNoteList([]); // Очищаем список
       }
@@ -145,7 +132,7 @@ export const TastingScreen = (props: any) => {
       console.log("Не удалось сохранить");
     }
     debugger;
-    setNoteList((prev) => [...prev, note]);
+    loadSavedNotes();
     setSearchTerm("");
     setFilteredNotes([]);
   };
@@ -164,10 +151,6 @@ export const TastingScreen = (props: any) => {
     );
     setFilteredNotes(results);
   };
-
-  // if (error) {
-  //   return <div className="error-message">Ошибка: {error}</div>;
-  // }
 
   return (
     <div className="tasting-board">
