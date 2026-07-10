@@ -1,11 +1,10 @@
-// app/routes/_index.tsx
 import { redirect, useLoaderData } from "react-router";
 import { supabaseAdmin } from "../lib/supabase";
 import { getUserId, getUserById } from "../lib/session.server";
 import { TastingList } from "~/pages/TastingList";
 import { notesCache } from "~/lib/notes-cache";
-import { UserContext } from "~/UserContext";
-import { AppProvider } from "~/AppContext";
+
+import styles from "./route.module.css";
 
 // ✅ Функция для загрузки всех нот с пагинацией
 export async function getAllNotes() {
@@ -129,8 +128,6 @@ export default function Index() {
     error: string | null;
   }>();
 
-  console.log({ user });
-
   if (error) {
     return (
       <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
@@ -154,10 +151,11 @@ export default function Index() {
   }
 
   return (
-    <div>
-      <p>Добро пожаловать, {user?.name}!</p>
-      <p>Загружено ароматов: {perfumeList?.length || 0}</p>
-      <p>Загружено нот: {notes?.length || 0}</p>
+    <div className={styles["page-layout"]}>
+      <p>Список пробников</p>
+
+      {/* <p>Загружено ароматов: {perfumeList?.length || 0}</p>
+      <p>Загружено нот: {notes?.length || 0}</p> */}
       <TastingList user={user} />
     </div>
   );

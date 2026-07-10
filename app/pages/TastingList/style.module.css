@@ -1,3 +1,10 @@
+.container {
+    margin: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
 .tasting-board {
     max-width: 600px;
     margin: 0 auto;
@@ -83,6 +90,14 @@
     margin: 5px;
     border: 1px solid white;
     padding: 15px;
-    width: 50%;
-    
+    width: 25%;
+    text-align: center;
+}
+
+
+.button {
+    background-color: rgb(102 216 216);
+    border-radius: 5px;
+    font-weight: 400;
+    padding: 20px;
 }
