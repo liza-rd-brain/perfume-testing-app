@@ -10,6 +10,7 @@ import { NoteList } from "~/components/NoteList";
 import { supabase } from "~/lib/supabase";
 import { useUser } from "~/UserContext";
 import { useAppData } from "~/AppContext";
+import { usePersistedUser } from "~/hooks/usePersistedUser";
 
 interface TastingScreenProps {
   notes: Note[];
@@ -49,11 +50,12 @@ export const TastingScreen = (props: any) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const userIdLocal = usePersistedUser(location?.state?.id);
 
   const params = useParams(); // ✅ Получаем id из URL
   const perfumeId = parseInt(params.id || "0"); // ✅ ID парфюма из URL
-  console.log({ params });
-  const userId = location.state.id;
+  console.log({ userIdLocal });
+  const userId = location?.state?.id || userIdLocal;
 
   // ✅ Загружаем сохраненные ноты при загрузке компонента
   useEffect(() => {
@@ -64,13 +66,6 @@ export const TastingScreen = (props: any) => {
 
   const loadSavedNotes = async () => {
     if (!userId) return;
-
-    console.log("🔍 Загружаем сохраненные ноты:");
-    console.log("  userId:", userId);
-    console.log("  userId тип:", typeof userId);
-    console.log("  userId длина:", userId?.length);
-    console.log("  perfumeId:", perfumeId);
-    console.log("  perfumeId тип:", typeof perfumeId);
 
     setIsLoading(true);
     try {
@@ -102,7 +97,7 @@ export const TastingScreen = (props: any) => {
             return [...prev, ...(item.notes?.middle || [])];
           }, [])
           .filter(
-            (note: { id: any; }, index: any, self: any[]) =>
+            (note: { id: any }, index: any, self: any[]) =>
               index === self.findIndex((n) => n.id === note.id),
           );
 
