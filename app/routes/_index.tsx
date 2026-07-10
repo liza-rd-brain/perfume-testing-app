@@ -83,12 +83,12 @@ export async function loader({ request }: { request: Request }) {
     // Проверяем авторизацию
     const userId = await getUserId(request);
     if (!userId) {
-      throw redirect("/login");
+      return redirect("/login");
     }
 
     const user = await getUserById(userId);
     if (!user) {
-      throw redirect("/login");
+      return redirect("/login");
     }
 
     // Загружаем все ноты
