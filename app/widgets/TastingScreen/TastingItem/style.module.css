@@ -99,7 +99,9 @@
 
 .tasting-type {
     input {
-        background-color: rgb(102 216 216 / 40%);
+        /* background-color: rgba(165, 226, 226, 0.4); */
+        /* color: rgb(52, 19, 19); */
+        font-weight: bolder;
         border-radius: 5px;
         padding-left: 20px;
         width: 100%;
