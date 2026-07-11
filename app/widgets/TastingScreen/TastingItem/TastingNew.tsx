@@ -19,8 +19,8 @@ export const TastingNew = ({
   userId: number;
   perfumeId: number;
   notes: any;
-  type: Base;
-  activeType: Base;
+  type: Base | null;
+  activeType: Base | null;
   addNewNotes: (note: any) => void;
   changeActiveType: (type: Base) => void;
 }) => {
@@ -37,7 +37,7 @@ export const TastingNew = ({
     activeType,
   }: {
     e: React.ChangeEvent<HTMLInputElement>;
-    activeType: Base;
+    activeType: Base | null;
   }) => {
     e.stopPropagation();
     const value = e.target.value;
@@ -163,7 +163,7 @@ export const TastingNew = ({
     );
   };
 
-  const getType = (type: Base) => {
+  const getType = (type: Base | null) => {
     switch (type) {
       case Base.TOP: {
         return <SearchItem type={Base.TOP}></SearchItem>;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   useLoaderData,
   useLocation,
@@ -58,7 +58,7 @@ export const TastingScreen = (props: any) => {
     middle: number[];
   }>({ top: [], base: [], middle: [] });
   const [isLoading, setIsLoading] = useState(true);
-  const [activeType, setActiveType] = useState(Base.TOP);
+  const [activeType, setActiveType] = useState<Base | null>(Base.TOP);
   const [activeSection, setActiveSection] = useState<string>("top-notes");
 
   const location = useLocation();
@@ -69,6 +69,9 @@ export const TastingScreen = (props: any) => {
 
   const userId = location?.state?.id || userIdLocal;
 
+  console.log({ activeSection });
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   // ✅ Загружаем сохраненные ноты при загрузке компонента
   useEffect(() => {
     if (userId && perfumeId) {
@@ -98,6 +101,9 @@ export const TastingScreen = (props: any) => {
         setActiveType(Base.MIDDLE);
       } else if (sectionId === "base-notes") {
         setActiveType(Base.BASE);
+      } else {
+        setActiveType(null);
+        textareaRef?.current?.focus();
       }
 
       element.scrollIntoView({
@@ -284,7 +290,13 @@ export const TastingScreen = (props: any) => {
       <section id="impressions" className={styles["section"]}>
         <h2 className={styles["section-title"]}>Заметка</h2>
         <div className={styles["impressions-content"]}>
-          <p>Ваши общие впечатления о парфюме...</p>
+          <textarea
+            ref={textareaRef}
+            autoFocus={activeSection === "impressions"}
+            id="story"
+            name="story"
+            rows={5}
+          />
         </div>
       </section>
     </div>
