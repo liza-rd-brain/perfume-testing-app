@@ -108,7 +108,7 @@ export const TastingScreen = (props: any) => {
 
       element.scrollIntoView({
         behavior: "auto",
-        block: "start",
+        block: sectionId === "impressions" ? "end" : "start",
       });
     }
   };
@@ -292,7 +292,7 @@ export const TastingScreen = (props: any) => {
         <div className={styles["impressions-content"]}>
           <textarea
             ref={textareaRef}
-            autoFocus={activeSection === "impressions"}
+
             id="story"
             name="story"
             rows={5}
