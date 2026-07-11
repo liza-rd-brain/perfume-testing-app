@@ -122,8 +122,7 @@ export const TastingNew = ({
         <div className={styles["search-container"]}>
           <input
             id={type}
-            autoFocus={false}
-            // autoFocus={type === activeType}
+            autoFocus={type === activeType}
             type="text"
             placeholder={`Поиск по ${type === Base.TOP ? "верхним" : type === Base.MIDDLE ? "средним" : "базовым"} нотам ...`}
             value={activeType === type ? searchTerm : undefined}
