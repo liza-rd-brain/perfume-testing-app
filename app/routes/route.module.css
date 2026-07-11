@@ -40,7 +40,6 @@
 }
 
 .title {
-
     font-weight: bolder;
     text-align: center;
     margin-bottom: 20px;
@@ -63,4 +62,27 @@
 
 .details {
     margin-bottom: 20px;
+}
+
+.main-header {
+    font-weight: bolder;
+    font-size: 25px;
+    position: sticky;
+    top: 0;
+    z-Index: 10;
+    padding: 10px 0;
+
+}
+
+@media (prefers-color-scheme: dark) {
+    .main-header {
+        background-color: var(--color-gray-950);
+        color: #f9fafb;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    .main-header {
+        background-color: var(--color-white);
+    }
 }

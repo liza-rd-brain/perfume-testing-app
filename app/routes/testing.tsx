@@ -2,8 +2,7 @@
 import { useLoaderData, useLocation, useParams } from "react-router";
 import { TastingScreen } from "~/widgets/TastingScreen/TastingItem";
 import { useAppData } from "~/context/AppContext"; // ← Добавить!
-
-// ❌ НЕТ loader!
+import styles from "./route.module.css";
 
 export default function Testing(props: any) {
   const { id } = useParams<{ id: string }>();
@@ -52,7 +51,7 @@ export default function Testing(props: any) {
         gap: "20px",
       }}
     >
-      <h1 style={{ fontWeight: "bolder" }}>Тестирование аромата №{id}</h1>
+      <h1 className={styles["main-header"]}> Аромат №{id}</h1>
       {/* <p>
         <strong>Название:</strong> {perfume.name}
       </p>
