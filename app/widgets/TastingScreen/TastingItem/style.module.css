@@ -191,8 +191,10 @@
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 12px;
-    color: var(--text-primary, #111827);
+    /*   color: var(--text-primary, #111827); */
 }
+
+
 
 /* ✅ Темная тема */
 :global(.dark) .section-nav {
@@ -211,4 +213,23 @@
 :global(.dark) .nav-link.active {
     background: var(--primary-color, #3b82f6);
     color: #ffffff;
+}
+
+.impressions-content {
+    width: 100%;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .impressions-content {
+        background-color: #393e4d57;
+        color: #f9fafb;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    .impressions-content {
+        background-color: #eef7f7
+    }
 }

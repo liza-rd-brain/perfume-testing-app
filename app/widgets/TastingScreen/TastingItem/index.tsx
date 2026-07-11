@@ -289,10 +289,10 @@ export const TastingScreen = (props: any) => {
       {/* ✅ Секция "Общие впечатления" */}
       <section id="impressions" className={styles["section"]}>
         <h2 className={styles["section-title"]}>Заметка</h2>
-        <div className={styles["impressions-content"]}>
+        <div>
           <textarea
+            className={styles["impressions-content"]}
             ref={textareaRef}
-
             id="story"
             name="story"
             rows={5}
