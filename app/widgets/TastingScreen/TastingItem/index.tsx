@@ -27,7 +27,7 @@ async function getSavedNotes(userId: string, perfumeId: number) {
     .select("notes")
     .eq("user_id", userId)
     .eq("perfume_id", perfumeId)
-    .single(); // .single() - потому что одна запись на пользователя и парфюм
+    .single();
 
   if (error) {
     console.error("❌ Ошибка получения нот:", error);
@@ -37,8 +37,13 @@ async function getSavedNotes(userId: string, perfumeId: number) {
   return data?.notes || null;
 }
 
-// поднять компонент или вообще разббить
-// чтобы не слетали начальны ноты
+// ✅ Конфигурация секций для навигации
+const SECTIONS = [
+  { id: "top-notes", label: "Верха " },
+  { id: "middle-notes", label: "Сердце " },
+  { id: "base-notes", label: "База " },
+  { id: "impressions", label: "Заметка" },
+];
 
 export const TastingScreen = (props: any) => {
   const rootData = useRouteLoaderData("root") as {
@@ -50,16 +55,17 @@ export const TastingScreen = (props: any) => {
   const [noteList, setNoteList] = useState<{
     top: number[];
     base: number[];
-    middle: [];
+    middle: number[];
   }>({ top: [], base: [], middle: [] });
   const [isLoading, setIsLoading] = useState(true);
   const [activeType, setActiveType] = useState(Base.TOP);
+  const [activeSection, setActiveSection] = useState<string>("top-notes");
 
   const location = useLocation();
   const userIdLocal = usePersistedUser(location?.state?.id);
 
-  const params = useParams(); // ✅ Получаем id из URL
-  const perfumeId = parseInt(params.id || "0"); // ✅ ID парфюма из URL
+  const params = useParams();
+  const perfumeId = parseInt(params.id || "0");
 
   const userId = location?.state?.id || userIdLocal;
 
@@ -79,6 +85,26 @@ export const TastingScreen = (props: any) => {
       base: savedNotes?.base || [],
       middle: savedNotes?.middle || [],
     });
+  };
+
+  // ✅ Плавный скролл к секции (без изменения URL)
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      setActiveSection(sectionId);
+      if (sectionId === "top-notes") {
+        setActiveType(Base.TOP);
+      } else if (sectionId === "middle-notes") {
+        setActiveType(Base.MIDDLE);
+      } else if (sectionId === "base-notes") {
+        setActiveType(Base.BASE);
+      }
+
+      element.scrollIntoView({
+        behavior: "auto",
+        block: "start",
+      });
+    }
   };
 
   const addNewNotes = ({ id, type }: { id: number; type: Base }) => {
@@ -101,7 +127,6 @@ export const TastingScreen = (props: any) => {
     type: Base;
   }) => {
     try {
-      // 1. Получаем существующую запись
       const { data: existing } = await supabase
         .from("user_experience")
         .select("notes")
@@ -114,18 +139,13 @@ export const TastingScreen = (props: any) => {
         return;
       }
       debugger;
-      // 2. Удаляем note.id из массива
       const currentNotes = existing.notes || {};
       const updatedNotes = {
         ...currentNotes,
         [type]: currentNotes[type]?.filter((id: number) => id !== noteId) || [],
       };
 
-    
-
-      // 4. Если объект notes стал пустым - удаляем всю запись?
       if (Object.keys(updatedNotes).length === 0) {
-        // Вариант А: Удалить всю запись
         const { error } = await supabase
           .from("user_experience")
           .delete()
@@ -136,7 +156,6 @@ export const TastingScreen = (props: any) => {
 
         console.log("✅ Запись полностью удалена");
       } else {
-        // Вариант Б: Обновить с удаленной нотой
         const { error } = await supabase
           .from("user_experience")
           .update({ notes: updatedNotes })
@@ -154,9 +173,6 @@ export const TastingScreen = (props: any) => {
 
         console.log("✅ Нота удалена");
       }
-
-      // // 5. Обновляем локальное состояние
-      // removeLocalNote({ id: noteId, type });
     } catch (error) {
       console.error("Ошибка при удалении:", error);
       alert("Не удалось удалить ноту");
@@ -168,73 +184,109 @@ export const TastingScreen = (props: any) => {
   const handleRemove = (type: Base) => (noteId: number) => {
     removeNote({ noteId, type });
   };
-return (
+
+  return (
     <div className={styles["tasting-board"]}>
-      <div
-        className={`
-        ${activeType === Base.TOP ? styles["tasting-type"] : undefined} 
-        ${styles["tasting-container"]}`}
-      >
-        <NoteList
-          // type={Base.TOP}
-          noteList={noteList.top}
-          title="Верхние ноты"
-          removeNote={handleRemove(Base.TOP)}
-        />
-        <TastingNew
-          activeType={activeType}
-          type={Base.TOP}
-          noteList={noteList}
-          userId={userId}
-          perfumeId={perfumeId}
-          notes={notes}
-          addNewNotes={addNewNotes}
-          changeActiveType={changeActiveType}
-        />
-      </div>
-      <div
-        className={`${activeType === Base.MIDDLE ? styles["tasting-type"] : undefined}`}
-      >
-        <NoteList
-          // type={Base.MIDDLE}
-          noteList={noteList.middle}
-          title="Средние ноты"
-          removeNote={handleRemove(Base.MIDDLE)}
-        />
-        <TastingNew
-          activeType={activeType}
-          type={Base.MIDDLE}
-          noteList={noteList}
-          userId={userId}
-          perfumeId={perfumeId}
-          notes={notes}
-          addNewNotes={addNewNotes}
-          changeActiveType={changeActiveType}
-        />
-      </div>
-      <div
-        className={`${activeType === Base.BASE ? styles["tasting-type"] : undefined}`}
-      >
-        <NoteList
-          // type={Base.BASE}
-          noteList={noteList.base}
-          title="Базовые ноты"
-          removeNote={handleRemove(Base.BASE)}
-        />
-        <TastingNew
-          activeType={activeType}
-          type={Base.BASE}
-          noteList={noteList}
-          userId={userId}
-          perfumeId={perfumeId}
-          notes={notes}
-          addNewNotes={addNewNotes}
-          changeActiveType={changeActiveType}
-        />
-      </div>
-      {/* {noteList.map((item) => (
-          <span>{item.name}</span>
-        ))} */}
+      {/* ✅ Навигационные плашки — кнопки, не ссылки */}
+      <nav className={styles["section-nav"]}>
+        {SECTIONS.map(({ id, label }) => (
+          <button
+            key={id}
+            className={`${styles["nav-link"]} ${
+              activeSection === id ? styles["active"] : ""
+            }`}
+            onClick={() => scrollToSection(id)}
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
+
+      {/* ✅ Секция "Верхние ноты" */}
+      <section id="top-notes" className={styles["section"]}>
+        <div
+          className={`
+          ${activeType === Base.TOP ? styles["tasting-type"] : undefined} 
+          ${styles["tasting-container"]}
+        `}
+        >
+          <NoteList
+            noteList={noteList.top}
+            title="Верхние ноты"
+            removeNote={handleRemove(Base.TOP)}
+          />
+          <TastingNew
+            activeType={activeType}
+            type={Base.TOP}
+            noteList={noteList}
+            userId={userId}
+            perfumeId={perfumeId}
+            notes={notes}
+            addNewNotes={addNewNotes}
+            changeActiveType={changeActiveType}
+          />
+        </div>
+      </section>
+
+      {/* ✅ Секция "Средние ноты" */}
+      <section id="middle-notes" className={styles["section"]}>
+        <div
+          className={`
+          ${activeType === Base.MIDDLE ? styles["tasting-type"] : undefined}
+          ${styles["tasting-container"]}
+        `}
+        >
+          <NoteList
+            noteList={noteList.middle}
+            title="Средние ноты"
+            removeNote={handleRemove(Base.MIDDLE)}
+          />
+          <TastingNew
+            activeType={activeType}
+            type={Base.MIDDLE}
+            noteList={noteList}
+            userId={userId}
+            perfumeId={perfumeId}
+            notes={notes}
+            addNewNotes={addNewNotes}
+            changeActiveType={changeActiveType}
+          />
+        </div>
+      </section>
+
+      {/* ✅ Секция "Базовые ноты" */}
+      <section id="base-notes" className={styles["section"]}>
+        <div
+          className={`
+          ${activeType === Base.BASE ? styles["tasting-type"] : undefined}
+          ${styles["tasting-container"]}
+        `}
+        >
+          <NoteList
+            noteList={noteList.base}
+            title="Базовые ноты"
+            removeNote={handleRemove(Base.BASE)}
+          />
+          <TastingNew
+            activeType={activeType}
+            type={Base.BASE}
+            noteList={noteList}
+            userId={userId}
+            perfumeId={perfumeId}
+            notes={notes}
+            addNewNotes={addNewNotes}
+            changeActiveType={changeActiveType}
+          />
+        </div>
+      </section>
+
+      {/* ✅ Секция "Общие впечатления" */}
+      <section id="impressions" className={styles["section"]}>
+        <h2 className={styles["section-title"]}>Заметка</h2>
+        <div className={styles["impressions-content"]}>
+          <p>Ваши общие впечатления о парфюме...</p>
+        </div>
+      </section>
     </div>
   );
 };

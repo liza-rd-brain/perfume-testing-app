@@ -41,16 +41,7 @@ export default function Testing(props: any) {
   }
 
   return (
-    <div
-      style={{
-        padding: "20px",
-        maxWidth: "800px",
-        margin: "0 5px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "20px",
-      }}
-    >
+    <div className={styles["main-testing"]}>
       <h1 className={styles["main-header"]}> Аромат №{id}</h1>
       {/* <p>
         <strong>Название:</strong> {perfume.name}
