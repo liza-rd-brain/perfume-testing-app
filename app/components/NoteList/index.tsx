@@ -9,7 +9,7 @@ export const NoteList = ({
 }: {
   noteList: number[];
   title: string;
-  removeNote: (noteId: number) => void;
+  removeNote?: (noteId: number) => void;
 }) => {
   const rootData = useRouteLoaderData("root") as {
     notes?: Note[];
@@ -17,35 +17,46 @@ export const NoteList = ({
   } | null;
   const notes = rootData?.notes || [];
 
-  const noteData = noteList.map((id) => notes?.find((note) => note.id === id));
+  const noteData = noteList?.map((item: number | { id: number }) =>
+    notes?.find((note) => {
+      if (typeof item === "number") {
+        return note.id === item;
+      } else {
+        return note.id === item.id;
+      }
+    }),
+  );
 
   const deleteNote = (noteId: number) => {
-    removeNote(noteId);
+    removeNote?.(noteId);
   };
 
   return (
     <div className={styles["note-saved"]}>
       <div className={styles["note-title"]}>{title}</div>
       <div className={styles["note-list"]}>
-        {noteData.map((note, index) => (
-          <div key={index} className={styles["note-row"]}>
-            {note?.image && (
-              <img
-                src={note.image}
-                referrerPolicy="no-referrer"
-                loading="lazy"
-              />
-            )}
-            <button
-              className={styles["delete-button"]}
-              onClick={() => deleteNote(note?.id || 0)}
-            >
-              {" "}
-              ✕
-            </button>
-            <div className={styles["note-text"]}>{note?.name}</div>
-          </div>
-        ))}
+        {noteData &&
+          noteData.map((note, index) => (
+            <div key={index} className={styles["note-row"]}>
+              {note?.image && (
+                <img
+                  src={note.image}
+                  referrerPolicy="no-referrer"
+                  loading="lazy"
+                />
+              )}
+              {removeNote && (
+                <button
+                  className={styles["delete-button"]}
+                  onClick={() => deleteNote(note?.id || 0)}
+                >
+                  {" "}
+                  ✕
+                </button>
+              )}
+              <div className={styles["note-text"]}>{note?.name}</div>
+            </div>
+          ))}
       </div>
     </div>
   );

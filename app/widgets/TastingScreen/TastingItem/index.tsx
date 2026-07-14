@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  NavLink,
   useLoaderData,
   useLocation,
   useParams,
@@ -330,6 +331,14 @@ export const TastingScreen = (props: any) => {
           />
         </div>
       </section>
+
+      <NavLink
+        key={perfumeId}
+        to={`/result/${perfumeId}`}
+        className={styles.testingItem}
+      >
+        Перейти к результатам
+      </NavLink>
     </div>
   );
 };

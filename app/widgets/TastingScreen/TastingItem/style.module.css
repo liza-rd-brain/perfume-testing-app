@@ -117,9 +117,8 @@
 
 .section {
     padding: 40px 0;
-    border-bottom: 1px solid #eee;
+    /* border-bottom: 1px solid #eee; */
     scroll-margin-top: 80px;
-    /* 👈 Отступ от sticky навигации */
 }
 
 /* ✅ Навигационные плашки */
@@ -180,7 +179,7 @@
 .section {
     scroll-margin-top: 200px;
     padding: 16px 0;
-    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    /* border-bottom: 1px solid var(--border-color, #e5e7eb); */
 }
 
 .section:last-child {
@@ -234,4 +233,13 @@
     .impressions-content {
         background-color: #eef7f7
     }
+}
+
+.testingItem {
+    margin: 5px;
+    padding: 15px;
+    width: 25%;
+    text-align: center;
+    border: 1px solid rgb(102 216 216);
+    border-radius: 5px;
 }
