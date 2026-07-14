@@ -41,26 +41,35 @@ export default function Result(props: any) {
     );
   }
 
-  console.log({ middle: perfume.notes.middle, perfume });
+  console.log({ perfume });
 
   return (
     <div className={styles["main-testing"]}>
       <h1 className={styles["main-header"]}> Аромат №{id}</h1>
-      <p>
-        <strong>Название:</strong> {perfume.name}
-      </p>
-      <p>
-        <strong>Парфюмер:</strong> {perfume.perfumer}
-      </p>
-      <p>
-        <strong>Бренд:</strong> {perfume.brand}
-      </p>
 
-      {perfume.link && (
-        <a href={perfume.link} target="_blank" rel="noopener noreferrer">
-          Подробнее на Fragrantica
-        </a>
-      )}
+      <img
+        className={styles["perfume-img"]}
+        src={perfume.image}
+        referrerPolicy="no-referrer"
+        loading="lazy"
+      />
+      <div>
+        <p>
+          <strong>Название:</strong> {perfume.name}
+        </p>
+        <p>
+          <strong>Парфюмер:</strong> {perfume.perfumer}
+        </p>
+        <p>
+          <strong>Бренд:</strong> {perfume.brand}
+        </p>
+
+        {perfume.link && (
+          <a href={perfume.link} target="_blank" rel="noopener noreferrer">
+            Подробнее на Fragrantica
+          </a>
+        )}
+      </div>
       {perfume.notes.top && (
         <NoteList noteList={perfume.notes.top} title="Верхние ноты" />
       )}

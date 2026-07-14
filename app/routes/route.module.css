@@ -109,3 +109,23 @@
     max-width: 800px;
     min-height: 100vh;
 }
+
+.perfume-img {
+    height: 200px;
+    width: min-content;
+    object-fit: contain;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    display: block;
+    /* прибивает к левому краю в Safari */
+    margin-right: auto;
+    /* дополнительно для Safari */
+    margin-left: 0;
+    max-width: 100%;
+}
+
+.about-container {
+    display: flex;
+    gap: 20px;
+
+}

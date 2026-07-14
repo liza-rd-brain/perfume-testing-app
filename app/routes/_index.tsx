@@ -67,7 +67,7 @@ export async function getPerfumeList() {
   // Загружаем perfume-set-1
   const { data: perfumeData, error: perfumeError } = await supabaseAdmin
     .from("perfume-set-1")
-    .select("id, name, perfumer, brand, link, notes")
+    .select("id, name, perfumer, brand, link, notes, image")
     .order("id");
 
   if (perfumeError) {
@@ -153,9 +153,6 @@ export default function Index() {
   return (
     <div className={styles["page-layout"]}>
       <p>Список пробников</p>
-
-      {/* <p>Загружено ароматов: {perfumeList?.length || 0}</p>
-      <p>Загружено нот: {notes?.length || 0}</p> */}
       <TastingList user={user} />
     </div>
   );

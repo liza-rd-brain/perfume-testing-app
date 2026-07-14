@@ -75,7 +75,6 @@ export const TastingScreen = (props: any) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   if (textareaRef?.current) {
-    debugger;
     textareaRef.current.value = noteList.impression;
   }
 

@@ -1,26 +1,23 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { NavLink, redirect, useNavigate } from "react-router"; // ← Убрали useLoaderData
 import styles from "./style.module.css";
 import { useAppData } from "~/context/AppContext"; // ← Добавили!
 
 export const TastingList = ({ user }: any) => {
-  console.log({ user });
-  // ✅ Используем контекст вместо useLoaderData!
   const navigate = useNavigate();
-  const { notes, perfumeList } = useAppData();
-
-  console.log({ perfumeList }, "TastingList");
-
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+  const { perfumeList } = useAppData();
 
   if (!perfumeList || perfumeList.length === 0) {
     return null;
   }
 
-  const goToRandom = () => {
-    const randomNumber = Math.floor(Math.random() * 15) + 1;
-    navigate(`/testing/${randomNumber}`);
-  };
+  const goToRandom = useCallback(() => {
+    const randomIndex = Math.floor(Math.random() * perfumeList.length);
+    const randomPerfume = perfumeList[randomIndex];
+    if (randomPerfume?.id) {
+      navigate(`/testing/${randomPerfume.id}`);
+    }
+  }, [navigate, perfumeList]); // ✅ Зависимости явно указаны
 
   return (
     <>

@@ -5,6 +5,8 @@ import { useLocation } from "react-router";
 export function usePersistedUser(userId?: string) {
   const location = useLocation();
   const [user, setUser] = useState<string | null>(null);
+  
+  if (typeof window === "undefined") return null;
 
   useEffect(() => {
     // ✅ localStorage доступен только в браузере

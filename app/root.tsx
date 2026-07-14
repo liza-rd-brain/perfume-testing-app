@@ -37,7 +37,7 @@ export default function Root() {
           rel="stylesheet"
         ></link>
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <AppProvider value={{ notes, perfumeList, user }}>
           <Outlet />
         </AppProvider>
