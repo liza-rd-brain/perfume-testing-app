@@ -1,6 +1,5 @@
-// app/lib/session.server.ts
+
 import { createCookieSessionStorage } from "react-router";
-// app/lib/session.server.ts
 import { redirect } from "react-router"; // ← добавить redirect
 import { supabase } from './supabase';
 

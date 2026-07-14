@@ -2,11 +2,11 @@ import { Form, redirect, useNavigation } from "react-router";
 
 import styles from "./route.module.css";
 import { useRef, useState, type DetailedHTMLProps } from "react";
+import { createUserDoneTutorial } from "~/lib/session.server";
 
 // ✅ Серверный код в action
 export async function action() {
   // Импортируем функцию ТОЛЬКО здесь, внутри action
-  const { createUserDoneTutorial } = await import("~/lib/session.server");
   console.log("start");
   //тут рисовать прелоадер
   await createUserDoneTutorial("/");
@@ -54,7 +54,12 @@ export default function Tutorial() {
         обкатывания на подопытном тебе.
         {/* <span style={{ color: "green" }}>добавить разворачивающуюся часть</span> */}
       </div>
-      <details  className={styles.details}ref={openDetail} open={open} onClick={changeOpen}>
+      <details
+        className={styles.details}
+        ref={openDetail}
+        open={open}
+        onClick={changeOpen}
+      >
         <summary>
           Инструкция
           <p className={styles["sub-text"]}>
@@ -70,7 +75,6 @@ export default function Tutorial() {
           парфюме будет кнопка посмотреть результаты.
           <br /> Ноты взяты по большей части с сайта fragrantica и могут быть
           неточными.
-         
         </p>
       </details>
       <Form method="post" className={styles.bottom}>
