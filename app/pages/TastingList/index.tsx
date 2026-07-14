@@ -4,11 +4,12 @@ import styles from "./style.module.css";
 import { useAppData } from "~/context/AppContext"; // ← Добавили!
 
 export const TastingList = ({ user }: any) => {
+  console.log({ user });
   // ✅ Используем контекст вместо useLoaderData!
   const navigate = useNavigate();
   const { notes, perfumeList } = useAppData();
 
-  console.log({ user }, "TastingList");
+  console.log({ perfumeList }, "TastingList");
 
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
 

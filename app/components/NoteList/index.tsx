@@ -18,8 +18,6 @@ export const NoteList = ({
   const notes = rootData?.notes || [];
 
   const noteData = noteList.map((id) => notes?.find((note) => note.id === id));
-  noteList;
-  console.log({ noteData, noteList });
 
   const deleteNote = (noteId: number) => {
     removeNote(noteId);

@@ -3,6 +3,7 @@ export interface Note {
     name: string;
     url: string;
     image: string
+
 }
 
 export enum Base {

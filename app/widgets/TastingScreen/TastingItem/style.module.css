@@ -219,6 +219,8 @@
     width: 100%;
     border-radius: 5px;
     padding: 10px;
+    height: 200px;
+    resize: none;
 }
 
 @media (prefers-color-scheme: dark) {

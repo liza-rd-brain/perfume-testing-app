@@ -15,6 +15,7 @@ interface Perfume {
   brand: string;
   link?: string;
   notes?: any;
+  impression: string;
 }
 
 interface AppContextType {

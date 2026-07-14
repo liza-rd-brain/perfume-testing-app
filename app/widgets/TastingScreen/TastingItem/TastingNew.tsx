@@ -28,7 +28,6 @@ export const TastingNew = ({
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
 
   const location = useLocation();
-  console.log({ location });
 
   //   const perfumeList = rootData?.perfumeList || [];
 
@@ -116,7 +115,6 @@ export const TastingNew = ({
   };
 
   const SearchItem = ({ type }: { type: string }) => {
-    console.log({ activeType });
     return (
       <>
         <div className={styles["search-container"]}>

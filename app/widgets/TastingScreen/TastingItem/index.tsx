@@ -49,6 +49,7 @@ export const TastingScreen = (props: any) => {
   const rootData = useRouteLoaderData("root") as {
     notes?: Note[];
     perfumeList?: any[];
+    impression: string;
   } | null;
   const notes = rootData?.notes || [];
 
@@ -56,7 +57,8 @@ export const TastingScreen = (props: any) => {
     top: number[];
     base: number[];
     middle: number[];
-  }>({ top: [], base: [], middle: [] });
+    impression: string;
+  }>({ top: [], base: [], middle: [], impression: "" });
   const [isLoading, setIsLoading] = useState(true);
   const [activeType, setActiveType] = useState<Base | null>(Base.TOP);
   const [activeSection, setActiveSection] = useState<string>("top-notes");
@@ -69,24 +71,38 @@ export const TastingScreen = (props: any) => {
 
   const userId = location?.state?.id || userIdLocal;
 
-  console.log({ activeSection });
-
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  if (textareaRef?.current) {
+    debugger;
+    textareaRef.current.value = noteList.impression;
+  }
+
   // ✅ Загружаем сохраненные ноты при загрузке компонента
   useEffect(() => {
     if (userId && perfumeId) {
-      console.log("useEffect");
       loadNotes();
     }
+    if (textareaRef?.current) {
+      textareaRef.current.value = noteList.impression;
+    }
+
+    // setInterval(() => {
+    //   console.log({ textareaRef: textareaRef.current });
+    // }, 1000);
   }, []);
+
+  useEffect(() => {}, []);
 
   const loadNotes = async () => {
     const savedNotes = await loadSavedNotes({ userId, perfumeId });
+
     console.log({ savedNotes });
     setNoteList({
       top: savedNotes?.top || [],
       base: savedNotes?.base || [],
       middle: savedNotes?.middle || [],
+      impression: savedNotes?.impression || "",
     });
   };
 
@@ -114,7 +130,6 @@ export const TastingScreen = (props: any) => {
   };
 
   const addNewNotes = ({ id, type }: { id: number; type: Base }) => {
-    debugger;
     setNoteList((prev) => ({
       ...prev,
       [type]: [...(prev[type] || []), id],
@@ -144,7 +159,7 @@ export const TastingScreen = (props: any) => {
         console.log("Запись не найдена");
         return;
       }
-      debugger;
+
       const currentNotes = existing.notes || {};
       const updatedNotes = {
         ...currentNotes,
@@ -168,8 +183,6 @@ export const TastingScreen = (props: any) => {
           .eq("user_id", userId)
           .eq("perfume_id", perfumeId);
 
-        debugger;
-
         setNoteList((prev) => ({
           ...prev,
           [type]: prev[type]?.filter((id: number) => id !== noteId) || [],
@@ -185,10 +198,23 @@ export const TastingScreen = (props: any) => {
     }
   };
 
-  console.log({ activeType });
-
   const handleRemove = (type: Base) => (noteId: number) => {
     removeNote({ noteId, type });
+  };
+
+  const saveText = async (e: any) => {
+    const handledText = textareaRef?.current?.value.replaceAll("\n", " ");
+    console.log({ handledText });
+    const { error } = await supabase.from("user_experience").upsert(
+      {
+        user_id: userId,
+        perfume_id: perfumeId,
+        impression: handledText,
+      },
+      {
+        onConflict: "user_id, perfume_id", // ✅ Теперь работает!
+      },
+    );
   };
 
   return (
@@ -291,11 +317,16 @@ export const TastingScreen = (props: any) => {
         <h2 className={styles["section-title"]}>Заметка</h2>
         <div>
           <textarea
+            placeholder="Твои впечатления от парфюма"
             className={styles["impressions-content"]}
             ref={textareaRef}
             id="story"
             name="story"
             rows={5}
+            autoSave={textareaRef?.current?.textContent || undefined}
+            onBlur={(e) => {
+              saveText(e);
+            }}
           />
         </div>
       </section>
