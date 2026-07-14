@@ -46,29 +46,40 @@ export default function Result(props: any) {
   return (
     <div className={styles["main-testing"]}>
       <h1 className={styles["main-header"]}> Аромат №{id}</h1>
+      <div className={styles["about-container"]}>
+        <img
+          className={styles["perfume-img"]}
+          src={perfume.image}
+          referrerPolicy="no-referrer"
+          loading="lazy"
+        />
+        <div className={styles["about-text"]}>
+          <p>
+            <strong>Название:</strong>
+          </p>
+          {perfume.name}
+          {perfume.perfumer && (
+            <p>
+              <strong>Парфюмер:</strong>
+            </p>
+          )}
+          {perfume.brand}
+          <p>
+            <strong>Бренд:</strong>
+          </p>
+          {perfume.brand}
 
-      <img
-        className={styles["perfume-img"]}
-        src={perfume.image}
-        referrerPolicy="no-referrer"
-        loading="lazy"
-      />
-      <div>
-        <p>
-          <strong>Название:</strong> {perfume.name}
-        </p>
-        <p>
-          <strong>Парфюмер:</strong> {perfume.perfumer}
-        </p>
-        <p>
-          <strong>Бренд:</strong> {perfume.brand}
-        </p>
-
-        {perfume.link && (
-          <a href={perfume.link} target="_blank" rel="noopener noreferrer">
-            Подробнее на Fragrantica
-          </a>
-        )}
+          {perfume.link && (
+            <a
+              href={perfume.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles["perfume-link"]}
+            >
+              ссылка на парфюм
+            </a>
+          )}
+        </div>
       </div>
       {perfume.notes.top && (
         <NoteList noteList={perfume.notes.top} title="Верхние ноты" />

@@ -334,7 +334,7 @@ export const TastingScreen = (props: any) => {
       <NavLink
         key={perfumeId}
         to={`/result/${perfumeId}`}
-        className={styles.testingItem}
+        className={`${styles.testingItem} ${styles.link}`}
       >
         Перейти к результатам
       </NavLink>

@@ -243,3 +243,9 @@
     border: 1px solid rgb(102 216 216);
     border-radius: 5px;
 }
+
+.link.link {
+    display: block;
+    margin-top: 10px;
+    width: 100%;
+}
