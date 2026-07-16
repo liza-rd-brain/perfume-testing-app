@@ -106,7 +106,7 @@ export const TastingScreen = (props: any) => {
     });
   };
 
-  // ✅ Плавный скролл к секции (без изменения URL)
+  //  скролл к секции (без изменения URL)
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -335,6 +335,7 @@ export const TastingScreen = (props: any) => {
         key={perfumeId}
         to={`/result/${perfumeId}`}
         className={`${styles.testingItem} ${styles.link}`}
+        state={noteList}
       >
         Перейти к результатам
       </NavLink>

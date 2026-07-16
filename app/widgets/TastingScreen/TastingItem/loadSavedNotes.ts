@@ -17,8 +17,6 @@ export const loadSavedNotes = async ({ userId, perfumeId }: { userId: number, pe
 
 
 
-
-
         // ✅ Если есть данные - берем notes
         if (data && data.length > 0) {
 

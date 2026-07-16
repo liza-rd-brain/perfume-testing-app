@@ -11,7 +11,7 @@ export default function Testing(props: any) {
   console.log({ props });
 
   // ✅ Получаем данные из контекста (запасной вариант)
-  const { perfumeList, notes, user } = useAppData();
+  const { perfumeList } = useAppData();
 
   // ✅ 1. Сначала из state (переданные через NavLink)
   const perfumeFromState = location.state?.perfume;
@@ -43,23 +43,6 @@ export default function Testing(props: any) {
   return (
     <div className={styles["main-testing"]}>
       <h1 className={styles["main-header"]}> Аромат №{id}</h1>
-      {/* <p>
-        <strong>Название:</strong> {perfume.name}
-      </p>
-      <p>
-        <strong>Парфюмер:</strong> {perfume.perfumer}
-      </p>
-      <p>
-        <strong>Бренд:</strong> {perfume.brand}
-      </p> */}
-
-      {/* {perfume.link && (
-        <a href={perfume.link} target="_blank" rel="noopener noreferrer">
-          Подробнее на Fragrantica
-        </a>
-      )} */}
-
-      {/* ✅ Передаем данные в TastingScreen */}
       <TastingScreen />
     </div>
   );

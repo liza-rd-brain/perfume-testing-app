@@ -23,6 +23,10 @@ export default [
                 file: "routes/testing.tsx",
             },
             {
+                path: "description/:id",
+                file: "routes/description.tsx",
+            },
+            {
                 path: "result/:id",
                 file: "routes/result.tsx",
             },
