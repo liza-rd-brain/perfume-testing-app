@@ -177,7 +177,7 @@ export const TastingScreen = (props: any) => {
 
   const saveText = async () => {
     const handledText = textareaRef?.current?.value.replaceAll("\n", " ");
-    console.log({ handledText });
+
     const { error } = await supabase.from("user_experience").upsert(
       {
         user_id: userId,

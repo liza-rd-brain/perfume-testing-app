@@ -33,7 +33,8 @@ export const loadAllSavedNotes = async (userId: number): Promise<{
             top: item.notes?.top || [],
             middle: item.notes?.middle || [],
             base: item.notes?.base || [],
-            impression: item.impression || ""
+            impression: item.impression || "",
+            isDone: item.isDone || false,
         }));
 
         return result;

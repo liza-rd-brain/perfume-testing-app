@@ -9,6 +9,8 @@ import { getIntersections } from "~/helpers/getIntersections";
 import { usePersistedUser } from "~/hooks/usePersistedUser";
 import { useState } from "react";
 import commonStyles from "../style/common.module.css";
+import type { Note } from "~/types";
+import { supabase } from "~/lib/supabase";
 
 const getIdList = (array: []) => {
   return array?.map((item: { id: number }) => item.id);
@@ -17,7 +19,7 @@ const getIdList = (array: []) => {
 export default function Result(props: any) {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
-  const { perfumeList, savedNotes } = useAppData();
+  const { perfumeList, savedNotes, user: userId } = useAppData();
   const perfumeFromState = location.state?.perfume;
 
   const userIdLocal = usePersistedUser(location?.state?.id);
@@ -77,6 +79,45 @@ export default function Result(props: any) {
     ...sourceNoteIdMiddle,
     ...(sourceNoteIdBase || []),
   ].length;
+
+  const markDone = async ({
+    note,
+    type,
+    e,
+  }: {
+    note: Note;
+    type: string;
+    e: React.MouseEvent<HTMLLIElement, MouseEvent>;
+  }) => {
+    e.stopPropagation();
+
+    try {
+      // 1. Получаем существующую запись (если есть)
+      const { data: existing } = await supabase
+        .from("user_experience")
+        .select("notes")
+        .eq("user_id", userId)
+        .eq("perfume_id", id)
+        .maybeSingle();
+
+      // 3. UPSERT - если есть - обновит, если нет - создаст
+      const { error } = await supabase.from("user_experience").upsert(
+        {
+          user_id: userId,
+          perfume_id: id,
+          isDone: true,
+        },
+        {
+          onConflict: "user_id, perfume_id", // ✅ Теперь работает!
+        },
+      );
+
+      if (error) throw error;
+    } catch (error) {
+      console.error("Ошибка:", error);
+      alert("Не удалось сохранить");
+    }
+  };
 
   return (
     <div className={styles["main-testing"]}>
@@ -145,6 +186,9 @@ export default function Result(props: any) {
         to={`/description/${id}`}
         className={`${commonStyles.button}`}
         state={noteList}
+        onClick={() => {
+          console.log("test");
+        }}
       >
         Открыть парфюм
       </NavLink>

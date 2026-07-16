@@ -145,9 +145,7 @@
 
     >*:last-child {
         margin-top: auto;
-        /* прибивает к нижнему краю */
-        align-self: flex-end;
-        /* выравнивание по правому краю (опционально) */
+        align-self: flex-start;
     }
 }
 
