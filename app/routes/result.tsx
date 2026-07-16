@@ -20,7 +20,6 @@ export default function Result(props: any) {
   const perfumeFromState = location.state?.perfume;
 
   const userIdLocal = usePersistedUser(location?.state?.id);
-  const userId = location?.state?.id || userIdLocal;
 
   //TODO: helper
   const getInitialState = () => {
@@ -66,17 +65,10 @@ export default function Result(props: any) {
   const baseIntersection =
     getIntersections(sourceNoteIdBase, locStateBase) || [];
 
-  console.log({
-    middleIntersection,
-    sourceNoteIdMiddle,
-    locStateMiddle,
-  });
-
   return (
     <div className={styles["main-testing"]}>
       <h1 className={styles["main-header"]}> Аромат №{id}</h1>
       <h2 className={styles["main-header"]}> Угадано нот</h2>
-
       {perfume?.notes?.top && (
         <NoteList noteList={topIntersection} title="Верхние ноты" />
       )}

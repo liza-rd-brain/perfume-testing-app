@@ -11,6 +11,7 @@
     word-break: break-word;
     display: flex;
     align-items: end;
+    padding: 5px;
     /* max-width: 70%; */
 
 }
@@ -20,18 +21,20 @@
     position: relative;
     border: 1px solid #80808054;
     border-radius: 5px;
-    padding: 5px;
 
-    gap: 5px;
 
-    /* >* {
-        pointer-events: none
-    } */
+    /* gap: 10px; */
+
+    >img {
+        /* margin: -5px; */
+        border-radius: 5px;
+
+    }
 }
 
 .delete-button {
     position: absolute;
-    top: 0;
+    top: -3px;
     right: 3px;
     color: #987a7a;
     pointer-events: all
