@@ -22,14 +22,6 @@ export default function Testing(props: any) {
   // ✅ 3. Используем то, что нашли
   const perfume = perfumeFromState || perfumeFromContext;
 
-  console.log({
-    locationState: location.state,
-    perfumeFromState,
-    perfumeFromContext,
-    finalPerfume: perfume,
-    id,
-  });
-
   if (!perfume) {
     return (
       <div style={{ padding: "20px", textAlign: "center" }}>

@@ -4,26 +4,55 @@ import { TastingScreen } from "~/widgets/TastingScreen/TastingItem";
 import { useAppData } from "~/context/AppContext"; // ← Добавить!
 import styles from "./route.module.css";
 import { NoteList } from "~/components/NoteList";
+import { getIntersections } from "~/helpers/getIntersections";
+import { loadSavedNotes } from "~/widgets/TastingScreen/TastingItem/loadSavedNotes";
+import { usePersistedUser } from "~/hooks/usePersistedUser";
+import { useEffect, useState } from "react";
+import { useUser } from "~/UserContext";
+
+const getIdList = (array: []) => {
+  return array?.map((item: { id: number }) => item.id);
+};
 
 export default function Result(props: any) {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
-
-  const locState = location.state;
-
-  // Получаем данные из контекста (запасной вариант)
   const { perfumeList } = useAppData();
-
-  // 1. Сначала из state (переданные через NavLink)
   const perfumeFromState = location.state?.perfume;
 
-  //  2. Если нет в state - ищем в контексте
+  const userIdLocal = usePersistedUser(location?.state?.id);
+  const userId = location?.state?.id || userIdLocal;
+
+  const [noteList, setNoteList] = useState<{
+    top: number[];
+    base: number[];
+    middle: number[];
+    impression: string;
+  }>({ top: [], base: [], middle: [], impression: "" });
+
+  const loadNotes = async () => {
+    const savedNotes = await loadSavedNotes({
+      userId,
+      perfumeId: Number(id),
+    });
+
+    setNoteList({
+      top: savedNotes?.top || [],
+      base: savedNotes?.base || [],
+      middle: savedNotes?.middle || [],
+      impression: savedNotes?.impression || "",
+    });
+  };
+
+  useEffect(() => {
+    if (!perfumeFromState && userId) {
+      loadNotes();
+    }
+  }, [perfumeFromState, userId]);
+  const locState = location.state;
+
   const perfumeFromContext = perfumeList?.find((p) => p.id === Number(id));
-
-  // ✅ 3. Используем то, что нашли
   const perfume = perfumeFromState || perfumeFromContext;
-
-  console.log({ locState, perfumenotes: perfume.notes, perfume });
 
   if (!perfume) {
     return (
@@ -35,27 +64,25 @@ export default function Result(props: any) {
     );
   }
 
-  const sourceNoteIdTop = perfume?.notes?.top?.map(
-    (item: { id: number }) => item.id,
-  );
+  const sourceNoteIdTop = getIdList(perfume?.notes?.top);
   const locStateTop = locState?.top;
 
-  const sourceNoteIdMiddle = perfume?.notes?.middle?.map(
-    (item: { id: number }) => item.id,
-  );
-  const locStateMiddle = locState?.middle;
+  const sourceNoteIdMiddle = getIdList(perfume?.notes?.middle);
+  const locStateMiddle = noteList?.middle;
 
-  const sourceNoteIdTopSet = new Set(sourceNoteIdTop);
-  const locStateTopSet = new Set(locStateTop);
+  const sourceNoteIdBase = getIdList(perfume?.notes?.base);
+  const locStateBase = noteList?.base;
 
-  const sourceNoteIdMiddleSet = new Set<number>(sourceNoteIdMiddle);
-  const locStateMiddleSet = new Set<number>(locStateMiddle);
-
+  const topIntersection = getIntersections(sourceNoteIdTop, locStateTop) || [];
   const middleIntersection =
-    sourceNoteIdMiddleSet.intersection(locStateMiddleSet);
+    getIntersections(sourceNoteIdMiddle, locStateMiddle) || [];
+  const baseIntersection =
+    getIntersections(sourceNoteIdBase, locStateBase) || [];
 
   console.log({
     middleIntersection,
+    sourceNoteIdMiddle,
+    locStateMiddle,
   });
 
   return (
@@ -64,10 +91,10 @@ export default function Result(props: any) {
       <h2 className={styles["main-header"]}> Угадано нот</h2>
 
       {perfume?.notes?.top && (
-        <NoteList noteList={locState?.top} title="Верхние ноты" />
+        <NoteList noteList={topIntersection} title="Верхние ноты" />
       )}
       <NoteList
-        noteList={Array.from(middleIntersection)}
+        noteList={middleIntersection}
         title={
           !perfume.notes.top && !perfume.notes.base
             ? "Общие ноты"
@@ -75,7 +102,7 @@ export default function Result(props: any) {
         }
       />
       {perfume.notes.base && (
-        <NoteList noteList={perfume.notes.base} title="Базовые ноты" />
+        <NoteList noteList={baseIntersection} title="Базовые ноты" />
       )}
 
       {/* ✅ Передаем данные в TastingScreen */}

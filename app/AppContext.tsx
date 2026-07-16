@@ -1,5 +1,6 @@
 // app/context/AppContext.tsx
 import { createContext, useContext } from "react";
+import type { Note } from './types';
 
 interface AppData {
   user: any;

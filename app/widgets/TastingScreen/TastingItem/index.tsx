@@ -9,8 +9,7 @@ import {
 import styles from "./style.module.css";
 import { NoteList } from "~/components/NoteList";
 import { supabase } from "~/lib/supabase";
-import { useUser } from "~/UserContext";
-import { useAppData } from "~/AppContext";
+
 import { usePersistedUser } from "~/hooks/usePersistedUser";
 import { loadSavedNotes } from "./loadSavedNotes";
 import { TastingNew } from "./TastingNew";
@@ -92,12 +91,9 @@ export const TastingScreen = (props: any) => {
     // }, 1000);
   }, []);
 
-  useEffect(() => {}, []);
-
   const loadNotes = async () => {
     const savedNotes = await loadSavedNotes({ userId, perfumeId });
 
-    console.log({ savedNotes });
     setNoteList({
       top: savedNotes?.top || [],
       base: savedNotes?.base || [],
