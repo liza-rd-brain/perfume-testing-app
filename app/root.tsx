@@ -9,18 +9,24 @@ import {
 import "./app.css";
 import { getAllNotes, getPerfumeList } from "./routes/_index";
 import { AppProvider } from "./context/AppContext";
+import { getSession } from "./lib/session.server";
+import { loadAllSavedNotes } from "./widgets/TastingScreen/TastingItem/loadAllSavedNotes";
 
-export async function loader() {
-  console.log("🔄 ===== ROOT LOADER ===== (ТОЛЬКО 1 РАЗ!)");
+export async function loader({ request }: { request: Request }) {
   const [notes, perfumeList] = await Promise.all([
     getAllNotes(),
     getPerfumeList(),
   ]);
-  return { notes, perfumeList };
+  const session = await getSession(request.headers.get("Cookie"));
+  const userId = session.get("userId");
+  const savedNotes = await loadAllSavedNotes(userId);
+  return { notes, userId, perfumeList, savedNotes };
 }
 
 export default function Root() {
-  const { notes, perfumeList, user } = useLoaderData();
+  const { notes, perfumeList, userId, savedNotes } = useLoaderData();
+
+  console.log({ savedNotes });
   return (
     <html lang="ru">
       <head>
@@ -38,7 +44,7 @@ export default function Root() {
         ></link>
       </head>
       <body suppressHydrationWarning>
-        <AppProvider value={{ notes, perfumeList, user }}>
+        <AppProvider value={{ notes, perfumeList, user: userId, savedNotes }}>
           <Outlet />
         </AppProvider>
         <ScrollRestoration />

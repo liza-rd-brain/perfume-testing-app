@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
   NavLink,
-  useLoaderData,
   useLocation,
   useParams,
   useRouteLoaderData,
@@ -11,7 +10,7 @@ import { NoteList } from "~/components/NoteList";
 import { supabase } from "~/lib/supabase";
 
 import { usePersistedUser } from "~/hooks/usePersistedUser";
-import { loadSavedNotes } from "./loadSavedNotes";
+
 import { TastingNew } from "./TastingNew";
 import { Base, type Note } from "~/types";
 
@@ -47,18 +46,29 @@ const SECTIONS = [
 
 export const TastingScreen = (props: any) => {
   const rootData = useRouteLoaderData("root") as {
-    notes?: Note[];
+    notes: Note[];
     perfumeList?: any[];
     impression: string;
+    savedNotes: any[];
   } | null;
   const notes = rootData?.notes || [];
+  const savedNotes = rootData?.savedNotes || [];
+  const params = useParams();
+  const perfumeId = parseInt(params.id || "0");
+
+  const getInitialState = () => {
+    return savedNotes.find(({ perfume_id }) => perfume_id === perfumeId);
+  };
 
   const [noteList, setNoteList] = useState<{
     top: number[];
     base: number[];
     middle: number[];
     impression: string;
-  }>({ top: [], base: [], middle: [], impression: "" });
+  }>(getInitialState);
+
+  console.log(noteList);
+
   const [isLoading, setIsLoading] = useState(true);
   const [activeType, setActiveType] = useState<Base | null>(Base.TOP);
   const [activeSection, setActiveSection] = useState<string>("top-notes");
@@ -66,41 +76,15 @@ export const TastingScreen = (props: any) => {
   const location = useLocation();
   const userIdLocal = usePersistedUser(location?.state?.id);
 
-  const params = useParams();
-  const perfumeId = parseInt(params.id || "0");
-
   const userId = location?.state?.id || userIdLocal;
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  if (textareaRef?.current) {
-    textareaRef.current.value = noteList.impression;
-  }
-
-  // ✅ Загружаем сохраненные ноты при загрузке компонента
   useEffect(() => {
-    if (userId && perfumeId) {
-      loadNotes();
-    }
     if (textareaRef?.current) {
-      textareaRef.current.value = noteList.impression;
+      textareaRef.current.value = noteList?.impression || "";
     }
-
-    // setInterval(() => {
-    //   console.log({ textareaRef: textareaRef.current });
-    // }, 1000);
   }, []);
-
-  const loadNotes = async () => {
-    const savedNotes = await loadSavedNotes({ userId, perfumeId });
-
-    setNoteList({
-      top: savedNotes?.top || [],
-      base: savedNotes?.base || [],
-      middle: savedNotes?.middle || [],
-      impression: savedNotes?.impression || "",
-    });
-  };
 
   //  скролл к секции (без изменения URL)
   const scrollToSection = (sectionId: string) => {
@@ -198,7 +182,7 @@ export const TastingScreen = (props: any) => {
     removeNote({ noteId, type });
   };
 
-  const saveText = async (e: any) => {
+  const saveText = async () => {
     const handledText = textareaRef?.current?.value.replaceAll("\n", " ");
     console.log({ handledText });
     const { error } = await supabase.from("user_experience").upsert(
@@ -239,7 +223,7 @@ export const TastingScreen = (props: any) => {
         `}
         >
           <NoteList
-            noteList={noteList.top}
+            noteList={noteList?.top}
             title="Верхние ноты"
             removeNote={handleRemove(Base.TOP)}
           />
@@ -265,7 +249,7 @@ export const TastingScreen = (props: any) => {
         `}
         >
           <NoteList
-            noteList={noteList.middle}
+            noteList={noteList?.middle}
             title="Средние ноты"
             removeNote={handleRemove(Base.MIDDLE)}
           />
@@ -291,7 +275,7 @@ export const TastingScreen = (props: any) => {
         `}
         >
           <NoteList
-            noteList={noteList.base}
+            noteList={noteList?.base}
             title="Базовые ноты"
             removeNote={handleRemove(Base.BASE)}
           />
@@ -319,10 +303,8 @@ export const TastingScreen = (props: any) => {
             id="story"
             name="story"
             rows={5}
-            autoSave={textareaRef?.current?.textContent || undefined}
-            onBlur={(e) => {
-              saveText(e);
-            }}
+            defaultValue=""
+            onBlur={saveText}
           />
         </div>
       </section>

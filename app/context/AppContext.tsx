@@ -24,6 +24,7 @@ interface AppContextType {
   user?: any;
   isLoading?: boolean;
   error?: string | null;
+  savedNotes: any;
 }
 
 // ✅ Создаем контекст с дефолтными значениями
@@ -33,6 +34,7 @@ const AppContext = createContext<AppContextType>({
   user: null,
   isLoading: false,
   error: null,
+  savedNotes: null,
 });
 
 // ✅ Хук для удобного использования

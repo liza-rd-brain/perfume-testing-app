@@ -2,7 +2,6 @@ import { useState } from "react";
 import styles from "./style.module.css";
 import { useLocation, useRouteLoaderData } from "react-router";
 import { supabase } from "~/lib/supabase";
-import { loadSavedNotes } from "./loadSavedNotes";
 import { Base, type Note } from "~/types";
 
 export const TastingNew = ({

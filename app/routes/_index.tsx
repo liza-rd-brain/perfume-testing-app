@@ -5,6 +5,7 @@ import { TastingList } from "~/pages/TastingList";
 import { notesCache } from "~/lib/notes-cache";
 
 import styles from "./route.module.css";
+import { loadAllSavedNotes } from "~/widgets/TastingScreen/TastingItem/loadAllSavedNotes";
 
 // ✅ Функция для загрузки всех нот с пагинацией
 export async function getAllNotes() {
@@ -97,10 +98,13 @@ export async function loader({ request }: { request: Request }) {
 
     const perfumeData = await getPerfumeList();
 
+    const allSavedNotes = await loadAllSavedNotes(Number(userId));
+
     return {
       perfumeList: perfumeData || [],
       notes: allNotes,
       user,
+      allSavedNotes,
       error: null,
     };
   } catch (error) {
@@ -109,6 +113,7 @@ export async function loader({ request }: { request: Request }) {
       perfumeList: [],
       notes: [],
       user: null,
+      allSavedNotes: [],
       error: error instanceof Error ? error.message : "Неизвестная ошибка",
     };
   }
@@ -126,6 +131,7 @@ export default function Index() {
     notes: any[];
     user: any;
     error: string | null;
+    allSavedNotes: any[];
   }>();
 
   if (error) {

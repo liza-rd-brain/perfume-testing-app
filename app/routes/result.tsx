@@ -5,10 +5,9 @@ import { useAppData } from "~/context/AppContext"; // ← Добавить!
 import styles from "./route.module.css";
 import { NoteList } from "~/components/NoteList";
 import { getIntersections } from "~/helpers/getIntersections";
-import { loadSavedNotes } from "~/widgets/TastingScreen/TastingItem/loadSavedNotes";
+
 import { usePersistedUser } from "~/hooks/usePersistedUser";
-import { useEffect, useState } from "react";
-import { useUser } from "~/UserContext";
+import { useState } from "react";
 
 const getIdList = (array: []) => {
   return array?.map((item: { id: number }) => item.id);
@@ -17,38 +16,26 @@ const getIdList = (array: []) => {
 export default function Result(props: any) {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
-  const { perfumeList } = useAppData();
+  const { perfumeList, savedNotes } = useAppData();
   const perfumeFromState = location.state?.perfume;
 
   const userIdLocal = usePersistedUser(location?.state?.id);
   const userId = location?.state?.id || userIdLocal;
+
+  //TODO: helper
+  const getInitialState = () => {
+    return savedNotes.find(
+      ({ perfume_id }: { perfume_id: number }) => perfume_id === Number(id),
+    );
+  };
 
   const [noteList, setNoteList] = useState<{
     top: number[];
     base: number[];
     middle: number[];
     impression: string;
-  }>({ top: [], base: [], middle: [], impression: "" });
+  }>(getInitialState);
 
-  const loadNotes = async () => {
-    const savedNotes = await loadSavedNotes({
-      userId,
-      perfumeId: Number(id),
-    });
-
-    setNoteList({
-      top: savedNotes?.top || [],
-      base: savedNotes?.base || [],
-      middle: savedNotes?.middle || [],
-      impression: savedNotes?.impression || "",
-    });
-  };
-
-  useEffect(() => {
-    if (!perfumeFromState && userId) {
-      loadNotes();
-    }
-  }, [perfumeFromState, userId]);
   const locState = location.state;
 
   const perfumeFromContext = perfumeList?.find((p) => p.id === Number(id));
