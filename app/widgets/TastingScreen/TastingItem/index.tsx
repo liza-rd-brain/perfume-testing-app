@@ -97,7 +97,7 @@ export const TastingScreen = (props: any) => {
 
       element.scrollIntoView({
         behavior: "auto",
-        block: sectionId === "impressions" ? "end" : "start",
+        block: "end",
       });
     }
   };
