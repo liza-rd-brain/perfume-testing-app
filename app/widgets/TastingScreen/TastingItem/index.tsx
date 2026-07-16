@@ -13,6 +13,7 @@ import { usePersistedUser } from "~/hooks/usePersistedUser";
 
 import { TastingNew } from "./TastingNew";
 import { Base, type Note } from "~/types";
+import commonStyles from "~/style/common.module.css";
 
 interface TastingScreenProps {
   notes: Note[];
@@ -21,9 +22,10 @@ interface TastingScreenProps {
 }
 
 const SECTIONS = [
-  { id: "top-notes", label: "Верха " },
-  { id: "middle-notes", label: "Сердце " },
-  { id: "base-notes", label: "База " },
+  { id: "top-notes", label: "Верха" },
+  { id: "middle-notes", label: "Сердце" },
+  { id: "common-notes", label: "Общие ноты" },
+  { id: "base-notes", label: "База" },
   { id: "impressions", label: "Заметка" },
 ];
 
@@ -83,6 +85,8 @@ export const TastingScreen = (props: any) => {
       if (sectionId === "top-notes") {
         setActiveType(Base.TOP);
       } else if (sectionId === "middle-notes") {
+        setActiveType(Base.MIDDLE);
+      } else if (sectionId === "common-notes") {
         setActiveType(Base.MIDDLE);
       } else if (sectionId === "base-notes") {
         setActiveType(Base.BASE);
@@ -186,11 +190,22 @@ export const TastingScreen = (props: any) => {
     );
   };
 
+  const getCurrentSection = () => {
+    console.log({ hasTopeAndBase: top && base });
+    if (top.length && base.length) {
+      return SECTIONS.filter(({ id }) => id !== "common-notes");
+    } else {
+      return SECTIONS.filter(
+        ({ id }) => id === "common-notes" || id === "impressions",
+      );
+    }
+  };
+
   return (
     <div className={styles["tasting-board"]}>
       {/* ✅ Навигационные плашки — кнопки, не ссылки */}
       <nav className={styles["section-nav"]}>
-        {SECTIONS.map(({ id, label }) => (
+        {getCurrentSection().map(({ id, label }) => (
           <button
             key={id}
             className={`${styles["nav-link"]} ${
@@ -204,7 +219,7 @@ export const TastingScreen = (props: any) => {
       </nav>
 
       {/* ✅ Секция "Верхние ноты" */}
-      {top && (
+      {!!top.length && (
         <section id="top-notes" className={styles["section"]}>
           <div
             className={`
@@ -232,7 +247,10 @@ export const TastingScreen = (props: any) => {
       )}
 
       {/* ✅ Секция "Средние ноты" */}
-      <section id="middle-notes" className={styles["section"]}>
+      <section
+        id={top.length && base.length ? "middle-notes" : "common-notes"}
+        className={styles["section"]}
+      >
         <div
           className={`
           ${activeType === Base.MIDDLE ? styles["tasting-type"] : undefined}
@@ -241,7 +259,7 @@ export const TastingScreen = (props: any) => {
         >
           <NoteList
             noteList={noteList?.middle}
-            title={top && base ? "Средние ноты" : "Общие ноты"}
+            title={top.length && base.length ? "Средние ноты" : "Общие ноты"}
             removeNote={handleRemove(Base.MIDDLE)}
           />
           <TastingNew
@@ -258,7 +276,7 @@ export const TastingScreen = (props: any) => {
       </section>
 
       {/* ✅ Секция "Базовые ноты" */}
-      {base && (
+      {!!base.length && (
         <section id="base-notes" className={styles["section"]}>
           <div
             className={`
@@ -305,10 +323,10 @@ export const TastingScreen = (props: any) => {
       <NavLink
         key={perfumeId}
         to={`/result/${perfumeId}`}
-        className={`${styles.testingItem} ${styles.link}`}
+        className={`${commonStyles.button} `}
         state={noteList}
       >
-        Перейти к результатам
+        Проверить угаданные ноты
       </NavLink>
     </div>
   );

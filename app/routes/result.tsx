@@ -1,5 +1,5 @@
 // app/routes/testing.tsx
-import { useLoaderData, useLocation, useParams } from "react-router";
+import { NavLink, useLoaderData, useLocation, useParams } from "react-router";
 import { TastingScreen } from "~/widgets/TastingScreen/TastingItem";
 import { useAppData } from "~/context/AppContext"; // ← Добавить!
 import styles from "./route.module.css";
@@ -8,6 +8,7 @@ import { getIntersections } from "~/helpers/getIntersections";
 
 import { usePersistedUser } from "~/hooks/usePersistedUser";
 import { useState } from "react";
+import commonStyles from "../style/common.module.css";
 
 const getIdList = (array: []) => {
   return array?.map((item: { id: number }) => item.id);
@@ -65,26 +66,88 @@ export default function Result(props: any) {
   const baseIntersection =
     getIntersections(sourceNoteIdBase, locStateBase) || [];
 
+  const noteSumm = [
+    ...(topIntersection || []),
+    ...middleIntersection,
+    ...(baseIntersection || []),
+  ].length;
+
+  const sourceNoteSumm = [
+    ...(sourceNoteIdTop || []),
+    ...sourceNoteIdMiddle,
+    ...(sourceNoteIdBase || []),
+  ].length;
+
   return (
     <div className={styles["main-testing"]}>
-      <h1 className={styles["main-header"]}> Аромат №{id}</h1>
-      <h2 className={styles["main-header"]}> Угадано нот</h2>
-      {perfume?.notes?.top && (
+      <div>
+        {" "}
+        <h1 className={styles["main-header"]}> Аромат №{id}</h1>
+        <p className={`${styles["main-header"]} ${styles["small-header"]}`}>
+          Совпадения нот
+        </p>
+        <p className={styles["main-comment"]}>
+          (учитываются только точные совпадения)
+        </p>
+      </div>
+
+      {!!perfume?.notes?.top && !!topIntersection.length && (
         <NoteList noteList={topIntersection} title="Верхние ноты" />
       )}
-      <NoteList
-        noteList={middleIntersection}
-        title={
-          !perfume.notes.top && !perfume.notes.base
-            ? "Общие ноты"
-            : "Средние ноты"
-        }
-      />
-      {perfume.notes.base && (
+      {!!middleIntersection.length && (
+        <NoteList
+          noteList={middleIntersection}
+          title={
+            !perfume.notes.top && !perfume.notes.base
+              ? "Общие ноты"
+              : "Средние ноты"
+          }
+        />
+      )}
+      {perfume.notes?.base && !!baseIntersection.length && (
         <NoteList noteList={baseIntersection} title="Базовые ноты" />
       )}
+      {noteSumm >= 4 && (
+        <div>
+          💫 Отгадано {noteSumm} нот из {sourceNoteSumm}!
+          <br /> Потрясающий результат!
+        </div>
+      )}
+      {noteSumm === 3 && (
+        <div>
+          🌟 {noteSumm} ноты! из {sourceNoteSumm}
+          <br />
+          Отгаданы главные аккорды?
+        </div>
+      )}
+      {noteSumm === 2 && (
+        <div>
+          ✨ {noteSumm} ноты из {sourceNoteSumm}!
+          <br /> Ты на верном пути!
+        </div>
+      )}
+      {noteSumm === 1 && (
+        <div>
+          🌿 {noteSumm} нота из {sourceNoteSumm}!
+          <br />
+          Ты начинаешь видеть картину аромата
+        </div>
+      )}
+      {noteSumm === 0 && (
+        <div>
+          🌀0 нот из {sourceNoteSumm}. Хитрый парфюм!
+          <br /> Пора узнать что это такое!
+        </div>
+      )}
 
-      {/* ✅ Передаем данные в TastingScreen */}
+      <NavLink
+        key={id}
+        to={`/description/${id}`}
+        className={`${commonStyles.button}`}
+        state={noteList}
+      >
+        Открыть парфюм
+      </NavLink>
     </div>
   );
 }
