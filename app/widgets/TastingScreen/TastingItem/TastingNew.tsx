@@ -127,7 +127,7 @@ export const TastingNew = ({
             onFocus={(e) => handleFocus(e, type as Base)}
           />
         </div>
-        <div className="results-container">
+        <div className={styles["results-container"]}>
           {searchTerm.trim() && filteredNotes.length === 0 && (
             <p className="no-results">Ничего не найдено</p>
           )}

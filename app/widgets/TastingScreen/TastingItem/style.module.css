@@ -36,10 +36,36 @@
     margin-bottom: 16px;
 }
 
+.results-container {
+    overflow: scroll;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 300px;
+
+}
+
+.results-container::-webkit-scrollbar {
+    width: 2px;
+    height: 8px;
+}
+
+.results-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.results-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+
+
 .notes-list {
     list-style: none;
     padding: 0;
     margin: 0;
+
 }
 
 .note-item {
@@ -48,6 +74,7 @@
     gap: 12px;
     padding: 12px 16px;
     border-bottom: 1px solid #f0ece8;
+    margin: 0 12px;
 }
 
 .note-item:hover {
