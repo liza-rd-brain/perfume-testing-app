@@ -75,7 +75,7 @@ export async function getPerfumeList() {
     console.error("❌ Perfume error:", perfumeError);
   }
 
-  return perfumeData;
+  return perfumeData || [];
 }
 
 export async function loader({ request }: { request: Request }) {
@@ -98,13 +98,14 @@ export async function loader({ request }: { request: Request }) {
 
     const perfumeData = await getPerfumeList();
 
-    const allSavedNotes = await loadAllSavedNotes(Number(userId));
+    const savedNotes = await loadAllSavedNotes(Number(userId));
 
+    // ✅ Всегда возвращаем массивы
     return {
       perfumeList: perfumeData || [],
-      notes: allNotes,
+      notes: allNotes || [],
       user,
-      allSavedNotes,
+      savedNotes: savedNotes || [],
       error: null,
     };
   } catch (error) {
@@ -113,7 +114,7 @@ export async function loader({ request }: { request: Request }) {
       perfumeList: [],
       notes: [],
       user: null,
-      allSavedNotes: [],
+      savedNotes: [],
       error: error instanceof Error ? error.message : "Неизвестная ошибка",
     };
   }
@@ -125,14 +126,23 @@ export const headers = () => ({
 
 export const shouldRevalidate = () => false;
 
+// ✅ Типизация для useLoaderData
+type LoaderData = {
+  perfumeList: any[];
+  notes: any[];
+  user: any;
+  error: string | null;
+  savedNotes: any[]; // ✅ Добавляем
+};
+
 export default function Index() {
-  const { user, error, perfumeList, notes } = useLoaderData<{
-    perfumeList: any[];
-    notes: any[];
-    user: any;
-    error: string | null;
-    allSavedNotes: any[];
-  }>();
+  const { user, error, perfumeList, notes, savedNotes } =
+    useLoaderData<LoaderData>(); // ✅ Используем типизацию
+
+  // ✅ Отладка
+  console.log("📊 Index - perfumeList:", perfumeList?.length);
+  console.log("📊 Index - notes:", notes?.length);
+  console.log("📊 Index - savedNotes:", savedNotes?.length);
 
   if (error) {
     return (
@@ -159,7 +169,8 @@ export default function Index() {
   return (
     <div className={styles["page-layout"]}>
       <p>Список пробников</p>
-      <TastingList user={user} />
+      {/* ✅ Передаём savedNotes в TastingList */}
+      <TastingList />
     </div>
   );
 }

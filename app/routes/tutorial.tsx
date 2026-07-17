@@ -21,7 +21,7 @@ export async function loader({ request }: { request: Request }) {
   // Если кука tutorial_done есть - редирект на главную
   if (cookieHeader?.includes("tutorialSkipped=true")) {
     console.log("скипнуть туториал");
-    // return redirect("/");
+    return redirect("/");
   }
 
   return null;
@@ -32,7 +32,6 @@ export default function Tutorial() {
   const isSubmitting = navigation.state === "submitting";
   const [open, setOpen] = useState(false);
   const openDetail = useRef<HTMLDetailsElement>(null);
-  console.log({ openDetail });
 
   const changeOpen = (e: React.MouseEvent<HTMLDetailsElement, MouseEvent>) => {
     e.preventDefault();

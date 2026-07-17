@@ -3,36 +3,44 @@ import { NavLink, redirect, useNavigate } from "react-router"; // ← Убрал
 import styles from "./style.module.css";
 import { useAppData } from "~/context/AppContext"; // ← Добавили!
 
-export const TastingList = ({ user }: any) => {
+export const TastingList = () => {
   const navigate = useNavigate();
-  const { perfumeList, savedNotes, ...rest } = useAppData();
+  const { perfumeList, savedNotes, user } = useAppData();
 
   if (!perfumeList || perfumeList.length === 0) {
     return null;
   }
 
+  // ✅ Используем useCallback вместо useMemo внутри функции
+  const checkIsDone = useCallback(
+    (id: number) => {
+      if (!Array.isArray(savedNotes)) return false;
+
+      const note = savedNotes.find((note: any) => note?.perfume_id === id);
+      return note?.isDone || false;
+    },
+    [savedNotes],
+  );
+
+  const notDonePerfumes = useMemo(() => {
+    if (!Array.isArray(perfumeList)) return [];
+
+    return perfumeList.filter((perfume) => !checkIsDone(perfume.id));
+  }, [perfumeList, checkIsDone]);
+
   const goToRandom = useCallback(() => {
-    const notDonePerfumes = perfumeList.filter((perfume) => {
-      const savedNote = savedNotes?.find(
-        (note: any) => note.perfume_id === perfume.id,
-      );
-      return !savedNote?.isDone; // true, если isDone === false или undefined
-    });
+    if (notDonePerfumes.length === 0) {
+      alert("🎉 Все парфюмы уже отмечены!");
+      return;
+    }
+
     const randomIndex = Math.floor(Math.random() * notDonePerfumes.length);
     const randomPerfume = notDonePerfumes[randomIndex];
+
     if (randomPerfume?.id) {
       navigate(`/testing/${randomPerfume.id}`);
     }
-  }, [navigate, perfumeList]);
-
-  const checkIsDone = (id: number) => {
-    const isDone = useMemo(
-      () => savedNotes.find((note: any) => note.perfume_id === id)?.isDone,
-      [id],
-    );
-
-    return isDone || false;
-  };
+  }, [navigate, notDonePerfumes]);
 
   return (
     <>
