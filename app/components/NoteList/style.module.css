@@ -21,6 +21,7 @@
     position: relative;
     border: 1px solid #80808054;
     border-radius: 5px;
+    min-height: 60px;
 }
 
 .image-wrapper {

@@ -11,30 +11,88 @@ import { getAllNotes, getPerfumeList } from "./routes/_index";
 import { AppProvider } from "./context/AppContext";
 import { getSession } from "./lib/session.server";
 import { loadAllSavedNotes } from "./widgets/TastingScreen/TastingItem/loadAllSavedNotes";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Note } from "./types";
 
+// ✅ Типизация для loader
+type LoaderData = {
+  notes: Note[];
+  perfumeList: any[];
+  userId: number | null;
+  savedNotes: any[];
+};
+
 export async function loader({ request }: { request: Request }) {
-  const [notes, perfumeList] = await Promise.all([
-    getAllNotes(),
-    getPerfumeList(),
-  ]);
-  const session = await getSession(request.headers.get("Cookie"));
-  const userId = session.get("userId");
-  const savedNotes = await loadAllSavedNotes(userId);
-  return { notes, userId, perfumeList, savedNotes };
+  try {
+    const [notes, perfumeList] = await Promise.all([
+      getAllNotes(),
+      getPerfumeList(),
+    ]);
+
+    const session = await getSession(request.headers.get("Cookie"));
+    const userId = session.get("userId");
+    const savedNotes = userId ? await loadAllSavedNotes(userId) : [];
+
+    return {
+      notes: notes || [],
+      perfumeList: perfumeList || [],
+      userId: userId || null,
+      savedNotes: savedNotes || [],
+    };
+  } catch (error) {
+    console.error("❌ Loader error:", error);
+    return {
+      notes: [],
+      perfumeList: [],
+      userId: null,
+      savedNotes: [],
+    };
+  }
 }
 
 export default function Root() {
-  const {
-    notes,
-    perfumeList,
-    userId,
-    savedNotes: newSavedNotes,
-  } = useLoaderData();
-  const [savedNotes, setSavedNotes] = useState<Note[]>(newSavedNotes);
+  // ✅ Безопасное получение данных с дефолтными значениями
+  const data = useLoaderData<LoaderData>() || {};
 
-  console.log({ savedNotes });
+  const {
+    notes = [],
+    perfumeList = [],
+    userId = null,
+    savedNotes: initialSavedNotes = [],
+  } = data;
+
+  // ✅ Состояние с защитой от undefined
+  const [savedNotes, setSavedNotes] = useState<any[]>(
+    Array.isArray(initialSavedNotes) ? initialSavedNotes : [],
+  );
+
+  // ✅ Синхронизация с данными из loader
+  useEffect(() => {
+    if (Array.isArray(initialSavedNotes)) {
+      setSavedNotes(initialSavedNotes);
+    }
+  }, [initialSavedNotes]);
+
+  console.log("🔍 Root state:", {
+    notesLength: notes.length,
+    perfumeListLength: perfumeList.length,
+    userId,
+    savedNotesLength: savedNotes.length,
+  });
+
+  // ✅ Проверка, что данные загружены
+  if (!notes || !perfumeList) {
+    return (
+      <html lang="ru">
+        <body>
+          <div style={{ padding: "20px", textAlign: "center" }}>
+            <h2>Загрузка данных...</h2>
+          </div>
+        </body>
+      </html>
+    );
+  }
+
   return (
     <html lang="ru">
       <head>
@@ -49,15 +107,15 @@ export default function Root() {
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
-        ></link>
+        />
       </head>
       <body suppressHydrationWarning>
         <AppProvider
           value={{
-            notes,
-            perfumeList,
+            notes: Array.isArray(notes) ? notes : [],
+            perfumeList: Array.isArray(perfumeList) ? perfumeList : [],
             user: userId,
-            savedNotes,
+            savedNotes: Array.isArray(savedNotes) ? savedNotes : [],
             setSavedNotes,
           }}
         >

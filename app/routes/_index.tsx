@@ -139,9 +139,6 @@ export default function Index() {
   const { user, error, perfumeList, notes, savedNotes } =
     useLoaderData<LoaderData>(); // ✅ Используем типизацию
 
-  // ✅ Отладка
-  console.log("📊 Index - perfumeList:", perfumeList?.length);
-  console.log("📊 Index - notes:", notes?.length);
   console.log("📊 Index - savedNotes:", savedNotes?.length);
 
   if (error) {
@@ -169,7 +166,6 @@ export default function Index() {
   return (
     <div className={styles["page-layout"]}>
       <p>Список пробников</p>
-      {/* ✅ Передаём savedNotes в TastingList */}
       <TastingList />
     </div>
   );

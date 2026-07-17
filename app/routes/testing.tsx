@@ -1,7 +1,7 @@
 // app/routes/testing.tsx
 import { useLoaderData, useLocation, useParams } from "react-router";
 import { TastingScreen } from "~/widgets/TastingScreen/TastingItem";
-import { useAppData } from "~/context/AppContext"; // ← Добавить!
+import { useAppData } from "~/context/AppContext";
 import styles from "./route.module.css";
 import { BackButton } from "~/components/NoteList/BackButton";
 import { useMemo } from "react";
@@ -12,7 +12,7 @@ export default function Testing(props: any) {
 
   console.log({ props });
 
-  // ✅ Получаем данные из контекста (запасной вариант)
+  // ✅ Получаем данные из контекста
   const { perfumeList, savedNotes } = useAppData();
 
   // ✅ 1. Сначала из state (переданные через NavLink)
@@ -23,17 +23,21 @@ export default function Testing(props: any) {
 
   // ✅ 3. Используем то, что нашли
   const perfume = perfumeFromState || perfumeFromContext;
+
+  // ✅ 4. Проверка isDone (БЕЗ useMemo внутри функции!)
   const checkIsDone = (id: number) => {
-    const isDone = useMemo(
-      () => savedNotes.find((note: any) => note.perfume_id === id)?.isDone,
-      [id],
-    );
-
-    return isDone || false;
+    if (!Array.isArray(savedNotes)) return false;
+    const note = savedNotes.find((note: any) => note?.perfume_id === id);
+    return note?.isDone || false;
   };
-  const isDone = checkIsDone(Number(id));
 
-  console.log({ isDone });
+  // ✅ 5. Вычисляем isDone через useMemo на верхнем уровне
+  const isDone = useMemo(() => {
+    if (!id) return false;
+    return checkIsDone(Number(id));
+  }, [savedNotes, id]);
+
+  console.log({ isDone, savedNotes });
 
   if (!perfume) {
     return (

@@ -1,65 +1,79 @@
-import { useCallback, useMemo, useState } from "react";
-import { NavLink, redirect, useNavigate } from "react-router"; // ← Убрали useLoaderData
+import { useCallback, useMemo } from "react";
+import { NavLink, useNavigate } from "react-router";
 import styles from "./style.module.css";
-import { useAppData } from "~/context/AppContext"; // ← Добавили!
+import { useAppData } from "~/context/AppContext";
 
 export const TastingList = () => {
   const navigate = useNavigate();
   const { perfumeList, savedNotes, user } = useAppData();
 
-  if (!perfumeList || perfumeList.length === 0) {
-    return null;
-  }
+  // ✅ Создаём Set только из ID, где isDone === true
+  const doneIds = useMemo(() => {
+    if (!Array.isArray(savedNotes)) return new Set();
 
-  // ✅ Используем useCallback вместо useMemo внутри функции
+    const ids = savedNotes
+      .filter((note: any) => note?.isDone === true)
+      .map((note: any) => note.perfume_id);
+
+    console.log("✅ Done IDs:", ids);
+    return new Set(ids);
+  }, [savedNotes]);
+
+  // ✅ checkIsDone - простая проверка в Set
   const checkIsDone = useCallback(
     (id: number) => {
-      if (!Array.isArray(savedNotes)) return false;
-
-      const note = savedNotes.find((note: any) => note?.perfume_id === id);
-      return note?.isDone || false;
+      return doneIds.has(id);
     },
-    [savedNotes],
+    [doneIds],
   );
 
+  // ✅ Фильтруем неотмеченные
   const notDonePerfumes = useMemo(() => {
     if (!Array.isArray(perfumeList)) return [];
-
-    return perfumeList.filter((perfume) => !checkIsDone(perfume.id));
-  }, [perfumeList, checkIsDone]);
+    return perfumeList.filter((perfume) => !doneIds.has(perfume.id));
+  }, [perfumeList, doneIds]);
 
   const goToRandom = useCallback(() => {
     if (notDonePerfumes.length === 0) {
       alert("🎉 Все парфюмы уже отмечены!");
       return;
     }
-
     const randomIndex = Math.floor(Math.random() * notDonePerfumes.length);
     const randomPerfume = notDonePerfumes[randomIndex];
-
     if (randomPerfume?.id) {
       navigate(`/testing/${randomPerfume.id}`);
     }
   }, [navigate, notDonePerfumes]);
 
+  if (!Array.isArray(perfumeList) || perfumeList.length === 0 || !savedNotes) {
+    return <div className={styles.loading}>Загрузка парфюмов...</div>;
+  }
+
   return (
     <>
       <div className={styles.container}>
-        {perfumeList.map(({ id }: { id: number }) => {
+        {perfumeList.map((perfume) => {
+          const isDone = checkIsDone(perfume.id);
+
+          console.log({ isDone });
           return (
             <NavLink
-              key={id}
-              to={checkIsDone(id) ? `/summary/${id}` : `/testing/${id}`}
-              className={`${styles.testingItem} ${checkIsDone(id) ? styles.testingItemDone : ""}`}
+              key={perfume.id}
+              to={isDone ? `/summary/${perfume.id}` : `/testing/${perfume.id}`}
+              className={`${styles.testingItem} ${isDone ? styles.testingItemDone : ""}`}
               state={user}
             >
-              {id}
+              {perfume.id}
             </NavLink>
           );
         })}
       </div>
-      <button className={`${styles.button}`} onClick={goToRandom}>
-        рандомный
+      <button
+        className={styles.button}
+        onClick={goToRandom}
+        disabled={notDonePerfumes.length === 0}
+      >
+        {notDonePerfumes.length === 0 ? "🎉 Всё готово!" : "🎲 Рандомный"}
       </button>
     </>
   );
