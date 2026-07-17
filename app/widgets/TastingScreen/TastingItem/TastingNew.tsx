@@ -66,7 +66,7 @@ export const TastingNew = ({
     try {
       // 1. Получаем существующую запись (если есть)
       const { data: existing } = await supabase
-        .from("user_experience")
+        .from("user-experience")
         .select("notes")
         .eq("user_id", userId)
         .eq("perfume_id", perfumeId)
@@ -80,7 +80,7 @@ export const TastingNew = ({
       };
 
       // 3. UPSERT - если есть - обновит, если нет - создаст
-      const { error } = await supabase.from("user_experience").upsert(
+      const { error } = await supabase.from("user-experience").upsert(
         {
           user_id: userId,
           perfume_id: perfumeId,

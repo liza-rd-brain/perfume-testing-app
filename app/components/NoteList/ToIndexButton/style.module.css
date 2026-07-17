@@ -1,0 +1,10 @@
+.button {
+    font-size: 14px;
+    margin-left: auto;
+    width: max-content;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}

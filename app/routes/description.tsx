@@ -4,8 +4,8 @@ import { TastingScreen } from "~/widgets/TastingScreen/TastingItem";
 import { useAppData } from "~/context/AppContext"; // ← Добавить!
 import styles from "./route.module.css";
 import { NoteList } from "~/components/NoteList";
-import { BackButton } from "~/components/NoteList/BackButton";
-import { ForwardButton } from "~/components/NoteList/ForwardButton";
+
+import { ToIndexButton } from "~/components/NoteList/ToIndexButton";
 
 export default function Result(props: any) {
   const { id } = useParams<{ id: string }>();
@@ -46,8 +46,8 @@ export default function Result(props: any) {
   return (
     <div className={styles["main-testing"]}>
       <div className={styles["header-container"]}>
-        <BackButton />
         <h1 className={styles["main-header"]}> Аромат №{id}</h1>
+        <ToIndexButton />
         {/* <ForwardButton /> */}
       </div>
       <div className={styles["about-container"]}>

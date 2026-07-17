@@ -95,14 +95,14 @@ export default function Result(props: any) {
     try {
       // 1. Получаем существующую запись (если есть)
       const { data: existing } = await supabase
-        .from("user_experience")
+        .from("user-experience")
         .select("notes")
         .eq("user_id", userId)
         .eq("perfume_id", id)
         .maybeSingle();
 
       // 3. UPSERT - если есть - обновит, если нет - создаст
-      const { error } = await supabase.from("user_experience").upsert(
+      const { error } = await supabase.from("user-experience").upsert(
         {
           user_id: userId,
           perfume_id: id,
@@ -188,11 +188,16 @@ export default function Result(props: any) {
         className={`${commonStyles.button}`}
         state={noteList}
         onClick={() => {
-          console.log("test");
+          console.log("записать пройденный");
         }}
       >
         Открыть парфюм
       </NavLink>
+      <p>
+        ноты не перезаписать
+        <br />
+        но можно дополнить комментарии
+      </p>
     </div>
   );
 }

@@ -122,7 +122,7 @@ export const TastingScreen = (props: any) => {
   }) => {
     try {
       const { data: existing } = await supabase
-        .from("user_experience")
+        .from("user-experience")
         .select("notes")
         .eq("user_id", userId)
         .eq("perfume_id", perfumeId)
@@ -141,7 +141,7 @@ export const TastingScreen = (props: any) => {
 
       if (Object.keys(updatedNotes).length === 0) {
         const { error } = await supabase
-          .from("user_experience")
+          .from("user-experience")
           .delete()
           .eq("user_id", userId)
           .eq("perfume_id", perfumeId);
@@ -151,7 +151,7 @@ export const TastingScreen = (props: any) => {
         console.log("✅ Запись полностью удалена");
       } else {
         const { error } = await supabase
-          .from("user_experience")
+          .from("user-experience")
           .update({ notes: updatedNotes })
           .eq("user_id", userId)
           .eq("perfume_id", perfumeId);
@@ -178,7 +178,7 @@ export const TastingScreen = (props: any) => {
   const saveText = async () => {
     const handledText = textareaRef?.current?.value.replaceAll("\n", " ");
 
-    const { error } = await supabase.from("user_experience").upsert(
+    const { error } = await supabase.from("user-experience").upsert(
       {
         user_id: userId,
         perfume_id: perfumeId,

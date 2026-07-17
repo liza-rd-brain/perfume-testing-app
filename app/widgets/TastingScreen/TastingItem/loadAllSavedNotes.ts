@@ -13,7 +13,7 @@ export const loadAllSavedNotes = async (userId: number): Promise<{
 
     try {
         const { data, error } = await supabase
-            .from("user_experience")
+            .from("user-experience")
             .select("*")
             .eq("user_id", userId);
 
