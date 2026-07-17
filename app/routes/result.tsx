@@ -7,7 +7,7 @@ import { NoteList } from "~/components/NoteList";
 import { getIntersections } from "~/helpers/getIntersections";
 
 import { usePersistedUser } from "~/hooks/usePersistedUser";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import commonStyles from "../style/common.module.css";
 import type { Note } from "~/types";
 import { supabase } from "~/lib/supabase";
@@ -26,17 +26,18 @@ export default function Result(props: any) {
   const userIdLocal = usePersistedUser(location?.state?.id);
 
   //TODO: helper
-  const getInitialState = () => {
+  const getInitialState = useMemo(() => {
     return savedNotes.find(
       ({ perfume_id }: { perfume_id: number }) => perfume_id === Number(id),
     );
-  };
+  }, [savedNotes]);
 
   const [noteList, setNoteList] = useState<{
     top: number[];
     base: number[];
     middle: number[];
     impression: string;
+    isDone: boolean;
   }>(getInitialState);
 
   const locState = location.state;
@@ -110,10 +111,13 @@ export default function Result(props: any) {
     }
   };
 
+  const isDone = noteList?.isDone;
+  console.log({ noteList });
+
   return (
     <div className={styles["main-testing"]}>
       <div className={styles["header-container"]}>
-        <BackButton />
+        {!isDone && <BackButton />}
         <h1> Аромат №{id}</h1>
       </div>
       <div>

@@ -1,5 +1,11 @@
 // app/routes/testing.tsx
-import { NavLink, useLoaderData, useLocation, useParams } from "react-router";
+import {
+  NavLink,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router";
 import { TastingScreen } from "~/widgets/TastingScreen/TastingItem";
 import { useAppData } from "~/context/AppContext"; // ← Добавить!
 import styles from "./route.module.css";
@@ -7,10 +13,12 @@ import { NoteList } from "~/components/NoteList";
 
 import { ToIndexButton } from "~/components/NoteList/ToIndexButton";
 import { supabase } from "~/lib/supabase";
+import { useEffect } from "react";
 
 export default function Result(props: any) {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
+  const navigate = useNavigate();
 
   console.log({ props });
 
@@ -33,6 +41,19 @@ export default function Result(props: any) {
     finalPerfume: perfume,
     id,
   });
+
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      event.preventDefault();
+      navigate("/");
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
 
   if (!perfume) {
     return (

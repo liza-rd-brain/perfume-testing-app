@@ -1,12 +1,9 @@
-// app/routes/testing.tsx
-import { NavLink, useLoaderData, useLocation, useParams } from "react-router";
-import { TastingScreen } from "~/widgets/TastingScreen/TastingItem";
+import { useLocation, useParams } from "react-router";
 import { useAppData } from "~/context/AppContext"; // ← Добавить!
 import styles from "./route.module.css";
 import { NoteList } from "~/components/NoteList";
 
 import { ToIndexButton } from "~/components/NoteList/ToIndexButton";
-import { supabase } from "~/lib/supabase";
 
 export default function Summary(props: any) {
   const { id } = useParams<{ id: string }>();
