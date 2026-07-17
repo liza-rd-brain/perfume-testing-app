@@ -86,7 +86,9 @@ export const TastingScreen = (props: any) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [activeType, setActiveType] = useState<Base | null>(Base.TOP);
-  const [activeSection, setActiveSection] = useState<string>("top-notes");
+  const [activeSection, setActiveSection] = useState<string>(
+    !!top.length ? "top-notes" : "common-notes",
+  );
 
   const location = useLocation();
   const userIdLocal = usePersistedUser(location?.state?.id);
