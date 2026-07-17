@@ -1,3 +1,4 @@
+// app/root.tsx
 import {
   Links,
   Meta,
@@ -7,14 +8,16 @@ import {
   useLoaderData,
 } from "react-router";
 import "./app.css";
-import { getAllNotes, getPerfumeList } from "./routes/_index";
+
 import { AppProvider } from "./context/AppContext";
 import { getSession } from "./lib/session.server";
 import { loadAllSavedNotes } from "./widgets/TastingScreen/TastingItem/loadAllSavedNotes";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { Note } from "./types";
 
-// ✅ Типизация для loader
+// ✅ Импортируем из отдельного файла
+import { getAllNotes, getPerfumeList } from "~/lib/data.server";
+
 type LoaderData = {
   notes: Note[];
   perfumeList: any[];
@@ -51,7 +54,6 @@ export async function loader({ request }: { request: Request }) {
 }
 
 export default function Root() {
-  // ✅ Безопасное получение данных с дефолтными значениями
   const data = useLoaderData<LoaderData>() || {};
 
   const {
@@ -61,30 +63,7 @@ export default function Root() {
     savedNotes: initialSavedNotes = [],
   } = data;
 
-  // ✅ Состояние с защитой от undefined
-  const [savedNotes, setSavedNotes] = useState<any[]>(
-    Array.isArray(initialSavedNotes) ? initialSavedNotes : [],
-  );
-
-  // ✅ Синхронизация с данными из loader
-  useEffect(() => {
-    if (Array.isArray(initialSavedNotes)) {
-      setSavedNotes(initialSavedNotes);
-    }
-  }, [initialSavedNotes]);
-
-  // ✅ Проверка, что данные загружены
-  if (!notes || !perfumeList) {
-    return (
-      <html lang="ru">
-        <body>
-          <div style={{ padding: "20px", textAlign: "center" }}>
-            <h2>Загрузка данных...</h2>
-          </div>
-        </body>
-      </html>
-    );
-  }
+  const [savedNotes, setSavedNotes] = useState(initialSavedNotes);
 
   return (
     <html lang="ru">

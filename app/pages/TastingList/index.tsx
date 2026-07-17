@@ -1,11 +1,12 @@
 import { useCallback, useMemo } from "react";
-import { NavLink, useNavigate } from "react-router";
+import { NavLink, useNavigate, useRouteLoaderData } from "react-router";
 import styles from "./style.module.css";
 import { useAppData } from "~/context/AppContext";
 
-export const TastingList = () => {
+export const TastingList = ({ perfumeList, savedNotes, user }: any) => {
   const navigate = useNavigate();
-  const { perfumeList, savedNotes, user } = useAppData();
+
+  console.log({ savedNotes }, "from TastingList");
 
   // ✅ Создаём Set только из ID, где isDone === true
   const doneIds = useMemo(() => {

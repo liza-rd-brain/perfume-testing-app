@@ -1,5 +1,11 @@
 // app/routes/testing.tsx
-import { NavLink, useLoaderData, useLocation, useParams } from "react-router";
+import {
+  NavLink,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router";
 import { TastingScreen } from "~/widgets/TastingScreen/TastingItem";
 import { useAppData } from "~/context/AppContext"; // ← Добавить!
 import styles from "./route.module.css";
@@ -22,6 +28,7 @@ export default function Result(props: any) {
   const location = useLocation();
   const { perfumeList, savedNotes, user: userId, setSavedNotes } = useAppData();
   const perfumeFromState = location.state?.perfume;
+  const navigate = useNavigate();
 
   const userIdLocal = usePersistedUser(location?.state?.id);
 
@@ -84,6 +91,7 @@ export default function Result(props: any) {
 
   const markDone = async () => {
     try {
+      // 1. Сохраняем в БД
       const { error } = await supabase.from("user-experience").upsert(
         {
           user_id: userId,
@@ -97,14 +105,28 @@ export default function Result(props: any) {
 
       if (error) throw error;
 
-      // ✅ Обновляем только isDone у конкретной записи
-      setSavedNotes(
-        savedNotes.map((item: any) =>
-          item.perfume_id === id
-            ? { ...item, isDone: true } // ✅ Обновляем только isDone
-            : item,
-        ),
-      );
+      // ✅ 2. Запрашиваем свежий список из БД
+      const { data: freshSavedNotes, error: fetchError } = await supabase
+        .from("user-experience")
+        .select("*")
+        .eq("user_id", userId);
+
+      if (fetchError) throw fetchError;
+
+      console.log({ freshSavedNotes });
+
+      // ✅ 3. Обновляем контекст свежими данными
+      if (freshSavedNotes) {
+        setSavedNotes(freshSavedNotes);
+      }
+
+      console.log("🟡 setSavedNotes вызван с:", freshSavedNotes?.length);
+
+      // И сразу после проверь
+      console.log("🟣 КОНТЕКСТ после обновления:", savedNotes?.length);
+
+      // 4. Переходим на страницу с описанием
+      navigate(`/description/${id}`);
     } catch (error) {
       console.error("Ошибка:", error);
       alert("Не удалось сохранить");
@@ -175,20 +197,10 @@ export default function Result(props: any) {
         </div>
       )}
 
-      <NavLink
-        key={id}
-        to={`/description/${id}`}
-        className={`${commonStyles.button}`}
-        state={noteList}
-        onClick={markDone}
-      >
+      <button key={id} className={`${commonStyles.button}`} onClick={markDone}>
         Открыть парфюм
-      </NavLink>
-      <p>
-        ноты не перезаписать
-        <br />
-        но можно дополнить комментарии
-      </p>
+      </button>
+      <p>изменить первое впечатление уже нельзя </p>
     </div>
   );
 }

@@ -37,6 +37,7 @@ export const TastingScreen = (props: any) => {
     impression: string;
     savedNotes: any[];
     isDone: any;
+    userId: any;
   } | null;
 
   console.log({ rootData });
@@ -90,7 +91,9 @@ export const TastingScreen = (props: any) => {
   const location = useLocation();
   const userIdLocal = usePersistedUser(location?.state?.id);
 
-  const userId = location?.state?.id || userIdLocal;
+  const userId = location?.state?.id || userIdLocal || rootData?.userId;
+
+  console.log({ userId });
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -206,18 +209,55 @@ export const TastingScreen = (props: any) => {
   };
 
   const saveText = async () => {
-    const handledText = textareaRef?.current?.value.replaceAll("\n", " ");
+    const handledText = textareaRef?.current?.value?.trim() || "";
 
-    const { error } = await supabase.from("user-experience").upsert(
-      {
-        user_id: userId,
-        perfume_id: perfumeId,
+    // ✅ Если текст пустой - ничего не делаем
+    if (!handledText) {
+      console.log("📝 Текст пустой, пропускаем сохранение");
+      return;
+    }
+
+    try {
+      // ✅ Проверяем, существует ли запись
+      const { data: existing, error: checkError } = await supabase
+        .from("user-experience")
+        .select("id, impression")
+        .eq("user_id", userId)
+        .eq("perfume_id", perfumeId)
+        .maybeSingle();
+
+      if (checkError) {
+        console.error("❌ Ошибка проверки:", checkError);
+        return;
+      }
+
+      // ✅ UPSERT
+      const { error } = await supabase.from("user-experience").upsert(
+        {
+          user_id: userId,
+          perfume_id: perfumeId,
+          impression: handledText,
+        },
+        {
+          onConflict: "user_id, perfume_id",
+        },
+      );
+
+      if (error) {
+        console.error("❌ Ошибка сохранения:", error);
+        return;
+      }
+
+      // ✅ Обновляем состояние
+      setNoteList((prev) => ({
+        ...prev,
         impression: handledText,
-      },
-      {
-        onConflict: "user_id, perfume_id", // ✅ Теперь работает!
-      },
-    );
+      }));
+
+      console.log(`✅ Заметка ${existing ? "обновлена" : "создана"}`);
+    } catch (error) {
+      console.error("💥 Ошибка при сохранении:", error);
+    }
   };
 
   const getCurrentSection = () => {

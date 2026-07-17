@@ -1,12 +1,5 @@
 // app/context/AppContext.tsx
-import {
-  createContext,
-  useContext,
-  useState,
-  type Dispatch,
-  type ReactNode,
-  type SetStateAction,
-} from "react";
+import { createContext, useContext, type ReactNode } from "react";
 
 interface Note {
   id: number;
@@ -25,14 +18,17 @@ interface Perfume {
   impression: string;
 }
 
+// ✅ Тип для setSavedNotes (поддерживает массив или функцию)
+type SetSavedNotesType = (payload: any[] | ((prev: any[]) => any[])) => void;
+
 interface AppContextType {
   notes: Note[];
   perfumeList: Perfume[];
   user?: any;
   isLoading?: boolean;
   error?: string | null;
-  savedNotes: any;
-  setSavedNotes: any;
+  savedNotes: any[]; // ✅ Всегда массив
+  setSavedNotes: SetSavedNotesType; // ✅ Правильный тип
 }
 
 // ✅ Создаем контекст с дефолтными значениями
@@ -42,7 +38,7 @@ const AppContext = createContext<AppContextType>({
   user: null,
   isLoading: false,
   error: null,
-  savedNotes: null,
+  savedNotes: [], // ✅ Всегда массив
   setSavedNotes: () => {},
 });
 
@@ -55,20 +51,16 @@ export const useAppContext = () => {
   return context;
 };
 
+// ✅ Хук для получения данных (можно оставить или убрать, дублирует useAppContext)
 export const useAppData = () => {
-  // 1. Берем данные из контекста
   const context = useContext(AppContext);
-
-  // 2. Проверяем, что контекст существует
   if (!context) {
     throw new Error("useAppData must be used within AppProvider");
   }
-
-  // 3. Возвращаем данные
-  return context; // ← { notes, perfumeList, user, isLoading, error }
+  return context;
 };
 
-// ✅ Провайдер
+// ✅ Провайдер (просто пробрасывает value)
 export const AppProvider = ({
   children,
   value,

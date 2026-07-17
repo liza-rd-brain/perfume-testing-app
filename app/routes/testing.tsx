@@ -11,7 +11,7 @@ export default function Testing(props: any) {
   const location = useLocation();
 
   // ✅ Получаем данные из контекста
-  const { perfumeList, savedNotes } = useAppData();
+  const { perfumeList, savedNotes, user } = useAppData();
 
   // ✅ 1. Сначала из state (переданные через NavLink)
   const perfumeFromState = location.state?.perfume;
