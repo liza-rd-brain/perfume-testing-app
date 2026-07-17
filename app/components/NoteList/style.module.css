@@ -26,8 +26,11 @@
     /* gap: 10px; */
 
     >img {
+
         /* margin: -5px; */
         border-radius: 5px;
+        /* max-width: 40px;
+        max-height: 40px; */
 
     }
 }

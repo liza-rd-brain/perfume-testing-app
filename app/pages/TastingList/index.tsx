@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { NavLink, redirect, useNavigate } from "react-router"; // ← Убрали useLoaderData
 import styles from "./style.module.css";
 import { useAppData } from "~/context/AppContext"; // ← Добавили!
@@ -7,27 +7,30 @@ export const TastingList = ({ user }: any) => {
   const navigate = useNavigate();
   const { perfumeList, savedNotes, ...rest } = useAppData();
 
-  debugger;
   if (!perfumeList || perfumeList.length === 0) {
     return null;
   }
 
-  console.log({ savedNotes });
-
   const goToRandom = useCallback(() => {
-    const randomIndex = Math.floor(Math.random() * perfumeList.length);
-    const randomPerfume = perfumeList[randomIndex];
+    const notDonePerfumes = perfumeList.filter((perfume) => {
+      const savedNote = savedNotes?.find(
+        (note: any) => note.perfume_id === perfume.id,
+      );
+      return !savedNote?.isDone; // true, если isDone === false или undefined
+    });
+    const randomIndex = Math.floor(Math.random() * notDonePerfumes.length);
+    const randomPerfume = notDonePerfumes[randomIndex];
     if (randomPerfume?.id) {
       navigate(`/testing/${randomPerfume.id}`);
     }
-  }, [navigate, perfumeList]); // ✅ Зависимости явно указаны
+  }, [navigate, perfumeList]);
 
   const checkIsDone = (id: number) => {
-    debugger;
-    const isDone = savedNotes.find(
-      (note: any) => note.perfume_id === id,
-    )?.isDone;
-    console.log({ isDone });
+    const isDone = useMemo(
+      () => savedNotes.find((note: any) => note.perfume_id === id)?.isDone,
+      [id],
+    );
+
     return isDone || false;
   };
 
@@ -38,9 +41,8 @@ export const TastingList = ({ user }: any) => {
           return (
             <NavLink
               key={id}
-              // ✅ Убрали двоеточие!
-              to={checkIsDone(id) ? `/description/${id}` : `/testing/${id}`}
-              className={styles.testingItem}
+              to={checkIsDone(id) ? `/summary/${id}` : `/testing/${id}`}
+              className={`${styles.testingItem} ${checkIsDone(id) ? styles.testingItemDone : ""}`}
               state={user}
             >
               {id}

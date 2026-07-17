@@ -30,6 +30,10 @@ export default [
                 path: "result/:id",
                 file: "routes/result.tsx",
             },
+            {
+                path: "summary/:id",
+                file: "routes/summary.tsx",
+            },
         ],
     },
 ] satisfies RouteConfig;
