@@ -76,14 +76,14 @@ export default function Summary(props: any) {
           )}
         </div>
       </div>
-      {perfume.notes.top && (
+      {perfume.notes.top.length && (
         <>
           <h1 className={styles["header-summary"]}> Верхние ноты :</h1>
 
           <div className={styles["with-separator-block"]}>
             <NoteList noteList={perfume.notes.top} title="Ноты с фрагрантики" />
-            {currentNotes?.top && (
-              <NoteList noteList={currentNotes?.top} title="Твои ноты" />
+            {!!currentNotes?.top.length && (
+              <NoteList noteList={currentNotes?.top ?? []} title="Твои ноты" />
             )}
           </div>
         </>
@@ -96,11 +96,11 @@ export default function Summary(props: any) {
       </h1>
       <div className={styles["with-separator-block"]}>
         <NoteList noteList={perfume.notes.middle} title="Ноты с фрагрантики" />
-        {currentNotes?.middle && (
-          <NoteList noteList={currentNotes.middle} title="Твои ноты" />
+        {!!currentNotes?.middle.length && (
+          <NoteList noteList={currentNotes?.middle ?? []} title="Твои ноты" />
         )}
       </div>
-      {perfume.notes.top && (
+      {perfume.notes.base.length && (
         <>
           <h1 className={styles["header-summary"]}> Базовые ноты :</h1>
 
@@ -110,10 +110,9 @@ export default function Summary(props: any) {
               title="Ноты с фрагрантики"
             />
 
-            <NoteList
-              noteList={currentNotes?.base ? currentNotes.base : []}
-              title="Твои ноты"
-            />
+            {!!currentNotes?.base.length && (
+              <NoteList noteList={currentNotes?.base ?? []} title="Твои ноты" />
+            )}
           </div>
         </>
       )}

@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react";
 import { NavLink, useNavigate, useRouteLoaderData } from "react-router";
 import styles from "./style.module.css";
 import { useAppData } from "~/context/AppContext";
+import { AddUserButton } from "~/components/NoteList/AddUserButton";
 
 export const TastingList = ({ perfumeList, savedNotes, user }: any) => {
   const navigate = useNavigate();
@@ -74,6 +75,7 @@ export const TastingList = ({ perfumeList, savedNotes, user }: any) => {
       >
         {notDonePerfumes.length === 0 ? "🎉 Всё готово!" : "🎲 Рандомный"}
       </button>
+      <AddUserButton />
     </>
   );
 };
