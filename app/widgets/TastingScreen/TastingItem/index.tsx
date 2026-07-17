@@ -44,7 +44,27 @@ export const TastingScreen = (props: any) => {
   const perfumeId = parseInt(params.id || "0");
 
   const getInitialState = () => {
-    return savedNotes.find(({ perfume_id }) => perfume_id === perfumeId);
+    // Проверяем, что savedNotes - массив
+    if (!Array.isArray(savedNotes) || savedNotes.length === 0) {
+      return {
+        top: [],
+        base: [],
+        middle: [],
+        impression: "",
+      };
+    }
+
+    const found = savedNotes.find(({ perfume_id }) => perfume_id === perfumeId);
+
+    // Если нашли - возвращаем, иначе - дефолтное состояние
+    return (
+      found || {
+        top: [],
+        base: [],
+        middle: [],
+        impression: "",
+      }
+    );
   };
 
   const [noteList, setNoteList] = useState<{
