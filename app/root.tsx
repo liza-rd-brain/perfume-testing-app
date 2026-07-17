@@ -12,7 +12,7 @@ import "./app.css";
 import { AppProvider } from "./context/AppContext";
 import { getSession } from "./lib/session.server";
 import { loadAllSavedNotes } from "./widgets/TastingScreen/TastingItem/loadAllSavedNotes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Note } from "./types";
 
 // ✅ Импортируем из отдельного файла
@@ -64,6 +64,9 @@ export default function Root() {
   } = data;
 
   const [savedNotes, setSavedNotes] = useState(initialSavedNotes);
+  useEffect(() => {
+    setSavedNotes(initialSavedNotes);
+  }, [userId]);
 
   return (
     <html lang="ru">
