@@ -27,8 +27,9 @@
 .image-wrapper {
     display: flex;
     justify-content: center;
-    background-color: white;
-    border-radius: 5px;
+    /* background-color: white;
+    border-radius: 5px; */
+    padding-left: 5px;
 
     >img {
         /* margin: -5px; */

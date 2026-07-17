@@ -26,18 +26,13 @@ const getIdList = (array: []) => {
 export default function Result(props: any) {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
-  const { perfumeList, savedNotes, user: userId, setSavedNotes } = useAppData();
-  const perfumeFromState = location.state?.perfume;
+  const { perfumeList, user: userId, setSavedNotes } = useAppData();
+
   const navigate = useNavigate();
 
-  const userIdLocal = usePersistedUser(location?.state?.id);
+  const selectedNotes = location.state;
 
   //TODO: helper
-  const getInitialState = useMemo(() => {
-    return savedNotes.find(
-      ({ perfume_id }: { perfume_id: number }) => perfume_id === Number(id),
-    );
-  }, [savedNotes]);
 
   const [noteList, setNoteList] = useState<{
     top: number[];
@@ -45,12 +40,10 @@ export default function Result(props: any) {
     middle: number[];
     impression: string;
     isDone: boolean;
-  }>(getInitialState);
-
-  const locState = location.state;
+  }>(selectedNotes);
 
   const perfumeFromContext = perfumeList?.find((p) => p.id === Number(id));
-  const perfume = perfumeFromState || perfumeFromContext;
+  const perfume = perfumeFromContext;
 
   if (!perfume) {
     return (
@@ -63,19 +56,21 @@ export default function Result(props: any) {
   }
 
   const sourceNoteIdTop = getIdList(perfume?.notes?.top);
-  const locStateTop = locState?.top;
+  const selectedNotesTop = selectedNotes?.top;
 
   const sourceNoteIdMiddle = getIdList(perfume?.notes?.middle);
-  const locStateMiddle = noteList?.middle;
+  const selectedNotesMiddle = noteList?.middle;
 
   const sourceNoteIdBase = getIdList(perfume?.notes?.base);
-  const locStateBase = noteList?.base;
+  const selectedNotesBase = noteList?.base;
 
-  const topIntersection = getIntersections(sourceNoteIdTop, locStateTop) || [];
+  const topIntersection =
+    getIntersections(sourceNoteIdTop, selectedNotesTop) || [];
+
   const middleIntersection =
-    getIntersections(sourceNoteIdMiddle, locStateMiddle) || [];
+    getIntersections(sourceNoteIdMiddle, selectedNotesMiddle) || [];
   const baseIntersection =
-    getIntersections(sourceNoteIdBase, locStateBase) || [];
+    getIntersections(sourceNoteIdBase, selectedNotesBase) || [];
 
   const noteSumm = [
     ...(topIntersection || []),

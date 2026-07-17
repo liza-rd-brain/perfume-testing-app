@@ -66,7 +66,7 @@ export default function Root() {
   const [savedNotes, setSavedNotes] = useState(initialSavedNotes);
   useEffect(() => {
     setSavedNotes(initialSavedNotes);
-  }, [userId]);
+  }, [userId, initialSavedNotes]);
 
   return (
     <html lang="ru">

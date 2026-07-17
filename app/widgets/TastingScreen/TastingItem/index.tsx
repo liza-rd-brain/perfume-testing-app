@@ -38,12 +38,15 @@ export const TastingScreen = (props: any) => {
     savedNotes: any[];
     isDone: any;
     userId: any;
+    setSavedNotes: any;
   } | null;
 
   const notes = rootData?.notes || [];
   const savedNotes = rootData?.savedNotes || [];
   const params = useParams();
   const perfumeId = parseInt(params.id || "0");
+
+  const updateSavedNotes = rootData?.setSavedNotes;
 
   const getInitialState = () => {
     // Проверяем, что savedNotes - массив
@@ -82,7 +85,6 @@ export const TastingScreen = (props: any) => {
     middle = [],
   } = rootData?.perfumeList?.[perfumeId - 1]?.notes;
 
-  const [isLoading, setIsLoading] = useState(true);
   const [activeType, setActiveType] = useState<Base | null>(Base.TOP);
   const [activeSection, setActiveSection] = useState<string>(
     !!top.length ? "top-notes" : "common-notes",
@@ -143,6 +145,10 @@ export const TastingScreen = (props: any) => {
       ...prev,
       [type]: [...(prev[type] || []), id],
     }));
+    updateSavedNotes?.((prev: any) => ({
+      ...prev,
+      [type]: [...(prev[type] || []), id],
+    }));
   };
 
   const changeActiveType = (type: Base) => {
@@ -190,6 +196,10 @@ export const TastingScreen = (props: any) => {
           .eq("perfume_id", perfumeId);
 
         setNoteList((prev) => ({
+          ...prev,
+          [type]: prev[type]?.filter((id: number) => id !== noteId) || [],
+        }));
+        updateSavedNotes?.((prev: any) => ({
           ...prev,
           [type]: prev[type]?.filter((id: number) => id !== noteId) || [],
         }));
@@ -247,6 +257,10 @@ export const TastingScreen = (props: any) => {
 
       // ✅ Обновляем состояние
       setNoteList((prev) => ({
+        ...prev,
+        impression: handledText,
+      }));
+      updateSavedNotes((prev: any) => ({
         ...prev,
         impression: handledText,
       }));
