@@ -1,9 +1,11 @@
 // app/routes/testing.tsx
-import { useLoaderData, useLocation, useParams } from "react-router";
+import { NavLink, useLoaderData, useLocation, useParams } from "react-router";
 import { TastingScreen } from "~/widgets/TastingScreen/TastingItem";
 import { useAppData } from "~/context/AppContext"; // ← Добавить!
 import styles from "./route.module.css";
 import { NoteList } from "~/components/NoteList";
+import { BackButton } from "~/components/NoteList/BackButton";
+import { ForwardButton } from "~/components/NoteList/ForwardButton";
 
 export default function Result(props: any) {
   const { id } = useParams<{ id: string }>();
@@ -43,7 +45,11 @@ export default function Result(props: any) {
 
   return (
     <div className={styles["main-testing"]}>
-      <h1 className={styles["main-header"]}> Аромат №{id}</h1>
+      <div className={styles["header-container"]}>
+        <BackButton />
+        <h1 className={styles["main-header"]}> Аромат №{id}</h1>
+        {/* <ForwardButton /> */}
+      </div>
       <div className={styles["about-container"]}>
         <img
           className={styles["perfume-img"]}

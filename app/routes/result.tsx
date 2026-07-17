@@ -11,6 +11,7 @@ import { useState } from "react";
 import commonStyles from "../style/common.module.css";
 import type { Note } from "~/types";
 import { supabase } from "~/lib/supabase";
+import { BackButton } from "~/components/NoteList/BackButton";
 
 const getIdList = (array: []) => {
   return array?.map((item: { id: number }) => item.id);
@@ -121,12 +122,12 @@ export default function Result(props: any) {
 
   return (
     <div className={styles["main-testing"]}>
+      <div className={styles["header-container"]}>
+        <BackButton />
+        <h1> Аромат №{id}</h1>
+      </div>
       <div>
-        {" "}
-        <h1 className={styles["main-header"]}> Аромат №{id}</h1>
-        <p className={`${styles["main-header"]} ${styles["small-header"]}`}>
-          Совпадения нот
-        </p>
+        <p className={` ${styles["small-header"]}`}>Совпадения нот</p>
         <p className={styles["main-comment"]}>
           (учитываются только точные совпадения)
         </p>

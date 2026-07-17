@@ -3,6 +3,7 @@ import { useLoaderData, useLocation, useParams } from "react-router";
 import { TastingScreen } from "~/widgets/TastingScreen/TastingItem";
 import { useAppData } from "~/context/AppContext"; // ← Добавить!
 import styles from "./route.module.css";
+import { BackButton } from "~/components/NoteList/BackButton";
 
 export default function Testing(props: any) {
   const { id } = useParams<{ id: string }>();
@@ -34,7 +35,10 @@ export default function Testing(props: any) {
 
   return (
     <div className={styles["main-testing"]}>
-      <h1 className={styles["main-header"]}> Аромат №{id}</h1>
+      <div className={styles["header-container"]}>
+        <BackButton />
+        <h1> Аромат №{id}</h1>
+      </div>
       <TastingScreen />
     </div>
   );

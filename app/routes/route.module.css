@@ -64,15 +64,20 @@
     margin-bottom: 20px;
 }
 
-.main-header {
+.main-header {}
+
+.header-container {
+    display: flex;
+    width: 100vw;
+    gap: 10px;
+    /* justify-content: space-between; */
     position: -webkit-sticky;
     position: sticky;
     background-clip: padding-box;
 
-
     top: -1px;
     margin: -1px -20px 0 -20px;
-    padding: 21px 20px 20px 20px;
+    padding: 21px 0 20px 0;
 
     font-weight: bolder;
     font-size: 25px;
@@ -80,16 +85,17 @@
 
     background-color: var(--bg-primary, #ffffff);
     align-self: flex-start;
-    width: 100vw;
+
     box-sizing: border-box;
 
     /* Оставляем для стабильности слоев на iOS */
     -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
+
 }
 
 @media (prefers-color-scheme: dark) {
-    .main-header {
+    .header-container {
         background-color: var(--color-gray-950);
         color: #f9fafb;
     }
@@ -97,7 +103,7 @@
 
 
 @media (prefers-color-scheme: light) {
-    .main-header {
+    .header-container {
         background-color: var(--color-white);
     }
 }
