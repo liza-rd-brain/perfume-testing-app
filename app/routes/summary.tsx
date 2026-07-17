@@ -88,12 +88,17 @@ export default function Summary(props: any) {
           )}
         </div>
       </div>
-      <h1 className={styles["header-summary"]}> Верхние ноты :</h1>
       {perfume.notes.top && (
-        <div className={styles["with-separator-block"]}>
-          <NoteList noteList={perfume.notes.top} title="Ноты с фрагрантики" />
-          <NoteList noteList={currentNotes.top} title="Твои ноты" />
-        </div>
+        <>
+          <h1 className={styles["header-summary"]}> Верхние ноты :</h1>
+
+          <div className={styles["with-separator-block"]}>
+            <NoteList noteList={perfume.notes.top} title="Ноты с фрагрантики" />
+            {currentNotes?.top && (
+              <NoteList noteList={currentNotes?.top} title="Твои ноты" />
+            )}
+          </div>
+        </>
       )}
       <h1 className={styles["header-summary"]}>
         {!perfume.notes.top && !perfume.notes.base
@@ -103,17 +108,35 @@ export default function Summary(props: any) {
       </h1>
       <div className={styles["with-separator-block"]}>
         <NoteList noteList={perfume.notes.middle} title="Ноты с фрагрантики" />
-        <NoteList noteList={currentNotes.middle} title="Твои ноты" />
+        {currentNotes?.middle && (
+          <NoteList noteList={currentNotes.middle} title="Твои ноты" />
+        )}
       </div>
-      <h1 className={styles["header-summary"]}> Базовые ноты :</h1>
       {perfume.notes.top && (
-        <div className={styles["with-separator-block"]}>
-          <NoteList noteList={perfume.notes.base} title="Ноты с фрагрантики" />
-          <NoteList noteList={currentNotes.base} title="Твои ноты" />
-        </div>
-      )}
+        <>
+          <h1 className={styles["header-summary"]}> Базовые ноты :</h1>
 
-      {/* ✅ Передаем данные в TastingScreen */}
+          <div className={styles["with-separator-block"]}>
+            <NoteList
+              noteList={perfume.notes.base}
+              title="Ноты с фрагрантики"
+            />
+
+            <NoteList
+              noteList={currentNotes?.base ? currentNotes.base : []}
+              title="Твои ноты"
+            />
+          </div>
+        </>
+      )}
+      {currentNotes?.impression && (
+        <>
+          <h1 className={styles["header-summary"]}> Заметка :</h1>
+          <div className={styles["impressions-content"]}>
+            {currentNotes.impression}
+          </div>
+        </>
+      )}
     </div>
   );
 }

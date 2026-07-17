@@ -21,17 +21,22 @@
     position: relative;
     border: 1px solid #80808054;
     border-radius: 5px;
+}
 
-
-    /* gap: 10px; */
+.image-wrapper {
+    display: flex;
+    justify-content: center;
+    background-color: white;
+    border-radius: 5px;
 
     >img {
-
         /* margin: -5px; */
         border-radius: 5px;
-        /* max-width: 40px;
-        max-height: 40px; */
-
+        max-width: 40px;
+        max-height: 40px;
+        margin-top: auto;
+        margin-bottom: auto;
+        position: relative;
     }
 }
 

@@ -178,20 +178,35 @@
     padding-bottom: 20px;
     border-bottom: 1px solid;
     display: flex;
-    justify-content: start;
-    align-items: start;
+    justify-content: space-between;
     gap: 10px;
 
     >* {
         justify-content: start;
-
         align-items: start;
+        width: 50%;
 
         >* {
             flex-direction: column;
         }
 
+    }
+}
 
+.impressions-content {
+    padding: 10px;
+    border-radius: 5px;
+}
 
+@media (prefers-color-scheme: dark) {
+    .impressions-content {
+        background-color: #393e4d57;
+        color: #f9fafb;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    .impressions-content {
+        background-color: #eef7f7
     }
 }

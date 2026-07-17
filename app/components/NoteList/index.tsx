@@ -39,18 +39,19 @@ export const NoteList = ({
           noteData.map((note, index) => (
             <div key={index} className={styles["note-row"]}>
               {note?.image && (
-                <img
-                  src={note.image}
-                  referrerPolicy="no-referrer"
-                  loading="lazy"
-                />
+                <div className={styles["image-wrapper"]}>
+                  <img
+                    src={note.image}
+                    referrerPolicy="no-referrer"
+                    loading="lazy"
+                  />
+                </div>
               )}
               {removeNote && (
                 <button
                   className={styles["delete-button"]}
                   onClick={() => deleteNote(note?.id || 0)}
                 >
-                  {" "}
                   ✕
                 </button>
               )}
