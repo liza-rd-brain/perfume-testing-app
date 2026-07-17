@@ -93,7 +93,6 @@ export const TastingNew = ({
 
       if (error) throw error;
 
-      console.log("✅ Сохранено!", existing ? "Обновлено" : "Создано");
       addNewNotes({ id: note.id, type });
       setSearchTerm("");
       setFilteredNotes([]);

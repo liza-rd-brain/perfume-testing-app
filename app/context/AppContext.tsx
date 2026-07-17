@@ -1,5 +1,12 @@
 // app/context/AppContext.tsx
-import { createContext, useContext, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+} from "react";
 
 interface Note {
   id: number;
@@ -25,6 +32,7 @@ interface AppContextType {
   isLoading?: boolean;
   error?: string | null;
   savedNotes: any;
+  setSavedNotes: any;
 }
 
 // ✅ Создаем контекст с дефолтными значениями
@@ -35,6 +43,7 @@ const AppContext = createContext<AppContextType>({
   isLoading: false,
   error: null,
   savedNotes: null,
+  setSavedNotes: () => {},
 });
 
 // ✅ Хук для удобного использования

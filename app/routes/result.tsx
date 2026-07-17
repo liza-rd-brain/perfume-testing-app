@@ -20,7 +20,7 @@ const getIdList = (array: []) => {
 export default function Result(props: any) {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
-  const { perfumeList, savedNotes, user: userId } = useAppData();
+  const { perfumeList, savedNotes, user: userId, setSavedNotes } = useAppData();
   const perfumeFromState = location.state?.perfume;
 
   const userIdLocal = usePersistedUser(location?.state?.id);
@@ -81,27 +81,8 @@ export default function Result(props: any) {
     ...(sourceNoteIdBase || []),
   ].length;
 
-  const markDone = async ({
-    note,
-    type,
-    e,
-  }: {
-    note: Note;
-    type: string;
-    e: React.MouseEvent<HTMLLIElement, MouseEvent>;
-  }) => {
-    e.stopPropagation();
-
+  const markDone = async () => {
     try {
-      // 1. Получаем существующую запись (если есть)
-      const { data: existing } = await supabase
-        .from("user-experience")
-        .select("notes")
-        .eq("user_id", userId)
-        .eq("perfume_id", id)
-        .maybeSingle();
-
-      // 3. UPSERT - если есть - обновит, если нет - создаст
       const { error } = await supabase.from("user-experience").upsert(
         {
           user_id: userId,
@@ -109,11 +90,20 @@ export default function Result(props: any) {
           isDone: true,
         },
         {
-          onConflict: "user_id, perfume_id", // ✅ Теперь работает!
+          onConflict: "user_id, perfume_id",
         },
       );
 
       if (error) throw error;
+
+      // ✅ Обновляем только isDone у конкретной записи
+      setSavedNotes(
+        savedNotes.map((item: any) =>
+          item.perfume_id === id
+            ? { ...item, isDone: true } // ✅ Обновляем только isDone
+            : item,
+        ),
+      );
     } catch (error) {
       console.error("Ошибка:", error);
       alert("Не удалось сохранить");
@@ -187,9 +177,7 @@ export default function Result(props: any) {
         to={`/description/${id}`}
         className={`${commonStyles.button}`}
         state={noteList}
-        onClick={() => {
-          console.log("записать пройденный");
-        }}
+        onClick={markDone}
       >
         Открыть парфюм
       </NavLink>

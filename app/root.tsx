@@ -11,6 +11,8 @@ import { getAllNotes, getPerfumeList } from "./routes/_index";
 import { AppProvider } from "./context/AppContext";
 import { getSession } from "./lib/session.server";
 import { loadAllSavedNotes } from "./widgets/TastingScreen/TastingItem/loadAllSavedNotes";
+import { useState } from "react";
+import type { Note } from "./types";
 
 export async function loader({ request }: { request: Request }) {
   const [notes, perfumeList] = await Promise.all([
@@ -24,7 +26,13 @@ export async function loader({ request }: { request: Request }) {
 }
 
 export default function Root() {
-  const { notes, perfumeList, userId, savedNotes } = useLoaderData();
+  const {
+    notes,
+    perfumeList,
+    userId,
+    savedNotes: newSavedNotes,
+  } = useLoaderData();
+  const [savedNotes, setSavedNotes] = useState<Note[]>(newSavedNotes);
 
   console.log({ savedNotes });
   return (
@@ -44,7 +52,15 @@ export default function Root() {
         ></link>
       </head>
       <body suppressHydrationWarning>
-        <AppProvider value={{ notes, perfumeList, user: userId, savedNotes }}>
+        <AppProvider
+          value={{
+            notes,
+            perfumeList,
+            user: userId,
+            savedNotes,
+            setSavedNotes,
+          }}
+        >
           <Outlet />
         </AppProvider>
         <ScrollRestoration />

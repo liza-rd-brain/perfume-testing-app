@@ -6,6 +6,7 @@ import styles from "./route.module.css";
 import { NoteList } from "~/components/NoteList";
 
 import { ToIndexButton } from "~/components/NoteList/ToIndexButton";
+import { supabase } from "~/lib/supabase";
 
 export default function Result(props: any) {
   const { id } = useParams<{ id: string }>();
@@ -14,7 +15,7 @@ export default function Result(props: any) {
   console.log({ props });
 
   // ✅ Получаем данные из контекста (запасной вариант)
-  const { perfumeList, notes, user } = useAppData();
+  const { perfumeList, notes, user: userId } = useAppData();
 
   // ✅ 1. Сначала из state (переданные через NavLink)
   const perfumeFromState = location.state?.perfume;
