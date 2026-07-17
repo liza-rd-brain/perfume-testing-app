@@ -55,6 +55,8 @@ export async function getPerfumeList() {
     .select("id, name, perfumer, brand, link, notes, image")
     .order("id");
 
+  console.log({ perfumeData });
+
   if (perfumeError) {
     console.error("❌ Perfume error:", perfumeError);
   }

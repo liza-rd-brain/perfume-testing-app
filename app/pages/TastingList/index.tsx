@@ -44,6 +44,8 @@ export const TastingList = ({ perfumeList, savedNotes, user }: any) => {
     }
   }, [navigate, notDonePerfumes]);
 
+  console.log({ perfumeList });
+
   if (!Array.isArray(perfumeList) || perfumeList.length === 0 || !savedNotes) {
     return <div className={styles.loading}>Загрузка парфюмов...</div>;
   }

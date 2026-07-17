@@ -110,7 +110,7 @@ export default function Summary(props: any) {
               title="Ноты с фрагрантики"
             />
 
-            {!!currentNotes?.base.length && (
+            {!!currentNotes?.base?.length && (
               <NoteList noteList={currentNotes?.base ?? []} title="Твои ноты" />
             )}
           </div>
