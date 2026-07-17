@@ -90,7 +90,7 @@ export default function Index() {
 
   return (
     <div className={styles["page-layout"]}>
-      <p>Список пробников</p>
+      <h1>Список пробников</h1>
       {/* ✅ Передаём данные из контекста, а не из loader */}
       <TastingList
         perfumeList={perfumeList}
