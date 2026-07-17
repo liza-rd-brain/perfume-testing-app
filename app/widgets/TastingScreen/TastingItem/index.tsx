@@ -77,6 +77,18 @@ export const TastingScreen = (props: any) => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      saveText();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
   //  скролл к секции (без изменения URL)
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
