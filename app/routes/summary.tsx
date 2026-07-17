@@ -9,8 +9,6 @@ export default function Summary(props: any) {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
 
-  console.log({ props });
-
   const { perfumeList, user, savedNotes } = useAppData();
 
   const perfumeFromState = location.state?.perfume;
@@ -25,13 +23,6 @@ export default function Summary(props: any) {
     );
   };
   const currentNotes = getSavedNotes();
-  console.log({
-    locationState: location.state,
-    perfumeFromState,
-    perfumeFromContext,
-    finalPerfume: perfume,
-    id,
-  });
 
   if (!perfume) {
     return (

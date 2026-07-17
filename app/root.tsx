@@ -73,13 +73,6 @@ export default function Root() {
     }
   }, [initialSavedNotes]);
 
-  console.log("🔍 Root state:", {
-    notesLength: notes.length,
-    perfumeListLength: perfumeList.length,
-    userId,
-    savedNotesLength: savedNotes.length,
-  });
-
   // ✅ Проверка, что данные загружены
   if (!notes || !perfumeList) {
     return (

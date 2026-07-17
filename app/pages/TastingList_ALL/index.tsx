@@ -21,8 +21,6 @@ export const TastingList = () => {
         ({ id, name, perfumer, brand, notes: notesPerfume }: any) => {
           const isLoaded = loadedImages.has(id);
 
-          console.log({ isLoaded });
-
           return (
             <div key={id}>
               {name} - {perfumer} - {brand}
@@ -45,7 +43,6 @@ export const TastingList = () => {
                               referrerPolicy="no-referrer"
                               loading="lazy"
                               onLoad={() => {
-                                console.log("loaded");
                                 setLoadedImages((prev) =>
                                   new Set(prev).add(id),
                                 );

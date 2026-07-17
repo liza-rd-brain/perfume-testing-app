@@ -23,7 +23,7 @@ export const loadAllSavedNotes = async (userId: number): Promise<{
         }
 
         if (!data || data.length === 0) {
-            console.log("📭 Нет сохраненных заметок");
+
             return undefined;
         }
 

@@ -20,8 +20,6 @@ export default function Result(props: any) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log({ props });
-
   // ✅ Получаем данные из контекста (запасной вариант)
   const { perfumeList, notes, user: userId } = useAppData();
 
@@ -33,14 +31,6 @@ export default function Result(props: any) {
 
   // ✅ 3. Используем то, что нашли
   const perfume = perfumeFromState || perfumeFromContext;
-
-  console.log({
-    locationState: location.state,
-    perfumeFromState,
-    perfumeFromContext,
-    finalPerfume: perfume,
-    id,
-  });
 
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {

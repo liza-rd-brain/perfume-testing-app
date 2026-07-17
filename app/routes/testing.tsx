@@ -10,8 +10,6 @@ export default function Testing(props: any) {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
 
-  console.log({ props });
-
   // ✅ Получаем данные из контекста
   const { perfumeList, savedNotes } = useAppData();
 
@@ -36,8 +34,6 @@ export default function Testing(props: any) {
     if (!id) return false;
     return checkIsDone(Number(id));
   }, [savedNotes, id]);
-
-  console.log({ isDone, savedNotes });
 
   if (!perfume) {
     return (

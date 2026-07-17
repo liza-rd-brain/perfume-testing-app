@@ -112,7 +112,6 @@ export default function Result(props: any) {
   };
 
   const isDone = noteList?.isDone;
-  console.log({ noteList });
 
   return (
     <div className={styles["main-testing"]}>

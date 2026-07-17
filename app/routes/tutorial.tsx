@@ -7,10 +7,10 @@ import { createUserDoneTutorial } from "~/lib/session.server";
 // ✅ Серверный код в action
 export async function action() {
   // Импортируем функцию ТОЛЬКО здесь, внутри action
-  console.log("start");
+
   //тут рисовать прелоадер
   await createUserDoneTutorial("/");
-  console.log("финиш");
+
   return redirect("/");
 }
 
@@ -20,7 +20,6 @@ export async function loader({ request }: { request: Request }) {
 
   // Если кука tutorial_done есть - редирект на главную
   if (cookieHeader?.includes("tutorialSkipped=true")) {
-    console.log("скипнуть туториал");
     return redirect("/");
   }
 

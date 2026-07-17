@@ -41,7 +41,7 @@ export const loginWithPassword = async (password: string): Promise<LoginResponse
 
         // 3. Пользователь не найден
         if (!data) {
-            console.log({ data })
+
             return {
                 success: false,
                 error: 'Неверный пароль. Попробуйте снова.'

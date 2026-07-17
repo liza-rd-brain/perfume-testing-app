@@ -43,4 +43,3 @@ export const supabaseAdmin = createClient(supabaseUrl, supabaseAnonKey, {
     },
 });
 
-console.log('✅ Supabase admin client created');

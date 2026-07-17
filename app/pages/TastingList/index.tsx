@@ -15,7 +15,6 @@ export const TastingList = () => {
       .filter((note: any) => note?.isDone === true)
       .map((note: any) => note.perfume_id);
 
-    console.log("✅ Done IDs:", ids);
     return new Set(ids);
   }, [savedNotes]);
 
@@ -55,7 +54,6 @@ export const TastingList = () => {
         {perfumeList.map((perfume) => {
           const isDone = checkIsDone(perfume.id);
 
-          console.log({ isDone });
           return (
             <NavLink
               key={perfume.id}

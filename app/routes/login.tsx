@@ -31,7 +31,6 @@ export async function action({ request }: Route.ActionArgs) {
 
   const isTutorialDone = formData.get("tutorialSkipped")?.toString();
 
-  console.log({ isTutorialDone });
   if (!isTutorialDone) {
     // Создаём сессию и перенаправляем на tutorial
     return createUserSession(user.id, "/tutorial");

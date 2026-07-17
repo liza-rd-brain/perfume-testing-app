@@ -36,7 +36,10 @@ export const TastingScreen = (props: any) => {
     perfumeList?: any[];
     impression: string;
     savedNotes: any[];
+    isDone: any;
   } | null;
+
+  console.log({ rootData });
 
   const notes = rootData?.notes || [];
   const savedNotes = rootData?.savedNotes || [];
@@ -161,7 +164,6 @@ export const TastingScreen = (props: any) => {
         .maybeSingle();
 
       if (!existing) {
-        console.log("Запись не найдена");
         return;
       }
 
@@ -179,8 +181,6 @@ export const TastingScreen = (props: any) => {
           .eq("perfume_id", perfumeId);
 
         if (error) throw error;
-
-        console.log("✅ Запись полностью удалена");
       } else {
         const { error } = await supabase
           .from("user-experience")
@@ -194,8 +194,6 @@ export const TastingScreen = (props: any) => {
         }));
 
         if (error) throw error;
-
-        console.log("✅ Нота удалена");
       }
     } catch (error) {
       console.error("Ошибка при удалении:", error);
@@ -223,7 +221,6 @@ export const TastingScreen = (props: any) => {
   };
 
   const getCurrentSection = () => {
-    console.log({ hasTopeAndBase: top && base });
     if (top.length && base.length) {
       return SECTIONS.filter(({ id }) => id !== "common-notes");
     } else {
@@ -280,7 +277,7 @@ export const TastingScreen = (props: any) => {
 
       {/* ✅ Секция "Средние ноты" */}
       <section
-        id={top.length && base.length ? "middle-notes" : "common-notes"}
+        id={top?.length && base.length ? "middle-notes" : "common-notes"}
         className={styles["section"]}
       >
         <div
@@ -291,7 +288,7 @@ export const TastingScreen = (props: any) => {
         >
           <NoteList
             noteList={noteList?.middle}
-            title={top.length && base.length ? "Средние ноты" : "Общие ноты"}
+            title={top?.length && base.length ? "Средние ноты" : "Общие ноты"}
             removeNote={handleRemove(Base.MIDDLE)}
           />
           <TastingNew
