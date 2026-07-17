@@ -75,7 +75,7 @@ export const TastingList = ({ perfumeList, savedNotes, user }: any) => {
       >
         {notDonePerfumes.length === 0 ? "🎉 Всё готово!" : "🎲 Рандомный"}
       </button>
-      <AddUserButton />
+      {/* <AddUserButton /> */}
     </>
   );
 };

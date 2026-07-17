@@ -1,4 +1,3 @@
-// app/components/AddUserButton.tsx
 import { useNavigate } from "react-router";
 import { supabase } from "~/lib/supabase";
 import { useAppContext } from "~/context/AppContext";
