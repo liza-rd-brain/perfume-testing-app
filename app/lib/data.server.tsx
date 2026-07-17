@@ -7,11 +7,8 @@ export async function getAllNotes() {
 
   const cached = notesCache.get(cacheKey);
   if (cached) {
-    console.log("✅ Using cached notes:", cached.length);
     return cached;
   }
-
-  console.log("🔄 Fetching all notes from database...");
 
   let allNotes: any[] = [];
   let from = 0;
@@ -48,7 +45,6 @@ export async function getAllNotes() {
   }
 
   notesCache.set(cacheKey, allNotes);
-  console.log(`✅ Total notes loaded: ${allNotes.length} (cached)`);
 
   return allNotes;
 }

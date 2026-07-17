@@ -7,8 +7,6 @@ import { AddUserButton } from "~/components/NoteList/AddUserButton";
 export const TastingList = ({ perfumeList, savedNotes, user }: any) => {
   const navigate = useNavigate();
 
-  console.log({ savedNotes }, "from TastingList");
-
   // ✅ Создаём Set только из ID, где isDone === true
   const doneIds = useMemo(() => {
     if (!Array.isArray(savedNotes)) return new Set();

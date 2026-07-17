@@ -31,7 +31,6 @@ export const AddUserButton = () => {
       // 3. Переходим на главную
       navigate("/");
 
-      console.log("✅ Новый пользователь создан:", newUser);
       alert(`Пользователь "${name}" создан!`);
     } catch (error) {
       console.error("Ошибка:", error);

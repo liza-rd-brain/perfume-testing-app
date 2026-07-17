@@ -12,8 +12,6 @@ import { useEffect } from "react";
 import { getAllNotes, getPerfumeList } from "~/lib/data.server";
 
 export async function loader({ request }: { request: Request }) {
-  console.log("🚀 Loader started");
-
   try {
     const userId = await getUserId(request);
     if (!userId) {
@@ -30,8 +28,6 @@ export async function loader({ request }: { request: Request }) {
       getPerfumeList(),
       loadAllSavedNotes(Number(userId)),
     ]);
-
-    console.log("№1", savedNotes?.length);
 
     return {
       perfumeList: perfumeData || [],
@@ -68,18 +64,7 @@ type LoaderData = {
 
 export default function Index() {
   const data = useLoaderData<LoaderData>();
-  const { setSavedNotes, savedNotes, perfumeList, user } = useAppContext(); // ✅ Берём контекст
-  const location = useLocation();
-
-  console.log({ savedNotes }, "Index");
-  // ✅ При загрузке страницы — синхронизируем контекст с данными из loader
-
-  // 🔍 Логи для диагностики
-  console.log(
-    "📊 Index - savedNotes из loader:",
-    data?.savedNotes?.length || 0,
-  );
-  console.log("📊 Index - savedNotes из контекста:", savedNotes?.length || 0);
+  const { savedNotes, perfumeList, user } = useAppContext(); //
 
   if (data?.error) {
     return (

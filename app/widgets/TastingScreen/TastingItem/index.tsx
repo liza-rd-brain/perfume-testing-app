@@ -40,8 +40,6 @@ export const TastingScreen = (props: any) => {
     userId: any;
   } | null;
 
-  console.log({ rootData });
-
   const notes = rootData?.notes || [];
   const savedNotes = rootData?.savedNotes || [];
   const params = useParams();
@@ -94,8 +92,6 @@ export const TastingScreen = (props: any) => {
   const userIdLocal = usePersistedUser(location?.state?.id);
 
   const userId = location?.state?.id || userIdLocal || rootData?.userId;
-
-  console.log({ userId });
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -215,7 +211,6 @@ export const TastingScreen = (props: any) => {
 
     // ✅ Если текст пустой - ничего не делаем
     if (!handledText) {
-      console.log("📝 Текст пустой, пропускаем сохранение");
       return;
     }
 
@@ -255,8 +250,6 @@ export const TastingScreen = (props: any) => {
         ...prev,
         impression: handledText,
       }));
-
-      console.log(`✅ Заметка ${existing ? "обновлена" : "создана"}`);
     } catch (error) {
       console.error("💥 Ошибка при сохранении:", error);
     }

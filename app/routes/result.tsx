@@ -113,17 +113,12 @@ export default function Result(props: any) {
 
       if (fetchError) throw fetchError;
 
-      console.log({ freshSavedNotes });
-
       // ✅ 3. Обновляем контекст свежими данными
       if (freshSavedNotes) {
         setSavedNotes(freshSavedNotes);
       }
 
-      console.log("🟡 setSavedNotes вызван с:", freshSavedNotes?.length);
-
       // И сразу после проверь
-      console.log("🟣 КОНТЕКСТ после обновления:", savedNotes?.length);
 
       // 4. Переходим на страницу с описанием
       navigate(`/description/${id}`);
