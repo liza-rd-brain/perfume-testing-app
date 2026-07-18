@@ -39,7 +39,7 @@ export type Note = {
     url?: string;
 }
 
-export type User = number
+export type User = number | null
 
 export type SavedNotes = {
     id: number;
@@ -47,11 +47,11 @@ export type SavedNotes = {
     user_id: number;
     impression: string;
     isDone: boolean
-    top: number[];
-    middle: number[];
-    base: number[]
-
-
+    notes: {
+        top: number[];
+        middle: number[];
+        base: number[]
+    }
 }
 
 

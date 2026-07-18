@@ -96,7 +96,7 @@ export default function Index() {
       <TastingList
         perfumeList={perfumeList}
         savedNotes={savedNotes}
-        user={user}
+        user={user || null}
       />
     </div>
   );

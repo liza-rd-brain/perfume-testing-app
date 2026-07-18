@@ -12,13 +12,7 @@ import { supabase } from "~/lib/supabase";
 import { usePersistedUser } from "~/hooks/usePersistedUser";
 
 import { TastingNew } from "./TastingNew";
-import {
-  Base,
-  type Note,
-  type Perfume,
-  type SavedNotes,
-  type UserData,
-} from "~/types";
+import { Base, type Note, type Perfume, type SavedNotes } from "~/types";
 import commonStyles from "~/style/common.module.css";
 
 interface TastingScreenProps {
@@ -58,9 +52,7 @@ export const TastingScreen = () => {
     // Проверяем, что savedNotes - массив
     if (!Array.isArray(savedNotes) || savedNotes.length === 0) {
       return {
-        top: [],
-        base: [],
-        middle: [],
+        notes: { top: [], base: [], middle: [] },
         impression: "",
       };
     }
@@ -70,18 +62,14 @@ export const TastingScreen = () => {
     // Если нашли - возвращаем, иначе - дефолтное состояние
     return (
       found || {
-        top: [],
-        base: [],
-        middle: [],
+        notes: { top: [], base: [], middle: [] },
         impression: "",
       }
     );
   };
 
   const [noteList, setNoteList] = useState<{
-    top: number[];
-    base: number[];
-    middle: number[];
+    notes: { top: number[]; base: number[]; middle: number[] };
     impression: string;
   }>(getInitialState);
 
@@ -151,8 +139,12 @@ export const TastingScreen = () => {
   const addNewNotes = ({ id, type }: { id: number; type: Base }) => {
     setNoteList((prev) => ({
       ...prev,
-      [type]: [...(prev[type] || []), id],
+      notes: {
+        ...prev.notes,
+        [type]: [...(prev.notes[type] || []), id],
+      },
     }));
+
     updateSavedNotes?.((prev: any) => ({
       ...prev,
       [type]: [...(prev[type] || []), id],
@@ -205,7 +197,13 @@ export const TastingScreen = () => {
 
         setNoteList((prev) => ({
           ...prev,
-          [type]: prev[type]?.filter((id: number) => id !== noteId) || [],
+          notes: {
+            ...prev.notes,
+            [type]: [
+              ...(prev.notes[type]?.filter((id: number) => id !== noteId) ||
+                []),
+            ],
+          },
         }));
         updateSavedNotes?.((prev: any) => ({
           ...prev,
@@ -314,7 +312,7 @@ export const TastingScreen = () => {
         `}
           >
             <NoteList
-              noteList={noteList?.top}
+              noteList={noteList.notes?.top}
               title="Верхние ноты"
               removeNote={handleRemove(Base.TOP)}
             />
@@ -344,7 +342,7 @@ export const TastingScreen = () => {
         `}
         >
           <NoteList
-            noteList={noteList?.middle}
+            noteList={noteList.notes?.middle}
             title={top?.length && base.length ? "Средние ноты" : "Общие ноты"}
             removeNote={handleRemove(Base.MIDDLE)}
           />
@@ -371,7 +369,7 @@ export const TastingScreen = () => {
         `}
           >
             <NoteList
-              noteList={noteList?.base}
+              noteList={noteList.notes?.base}
               title="Базовые ноты"
               removeNote={handleRemove(Base.BASE)}
             />
@@ -411,6 +409,11 @@ export const TastingScreen = () => {
         to={`/result/${perfumeId}`}
         className={`${commonStyles.button} `}
         state={noteList}
+        // onClick={(e) => {
+        //   if (true) {
+        //     e.preventDefault();
+        //   }
+        // }}
       >
         Проверить угаданные ноты
       </NavLink>

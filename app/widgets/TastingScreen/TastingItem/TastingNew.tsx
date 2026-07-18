@@ -1,8 +1,8 @@
 import { useState } from "react";
 import styles from "./style.module.css";
-import { useLocation, useRouteLoaderData } from "react-router";
+
 import { supabase } from "~/lib/supabase";
-import { Base, type Note, type SavedNotes, type UserData } from "~/types";
+import { Base, type Note, type SavedNotes } from "~/types";
 
 export const TastingNew = ({
   noteList,
@@ -14,7 +14,7 @@ export const TastingNew = ({
   activeType,
   changeActiveType,
 }: {
-  noteList: Pick<SavedNotes, "top" | "middle" | "base" | "impression">;
+  noteList: Pick<SavedNotes, "notes" | "impression">;
   userId: number;
   perfumeId: number;
   notes: Note[];

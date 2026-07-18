@@ -11,6 +11,8 @@ export default function Summary() {
 
   const { perfumeList, user, savedNotes } = useAppData();
 
+  console.log({ savedNotes }, "Summary");
+
   const perfumeFromState = location.state?.perfume;
 
   const perfumeFromContext = perfumeList?.find((p) => p.id === Number(id));
@@ -22,7 +24,9 @@ export default function Summary() {
       ({ perfume_id }: { perfume_id: number }) => perfume_id === Number(id),
     );
   };
-  const currentNotes = getSavedNotes();
+  const saved = getSavedNotes();
+  const currentNotes = saved?.notes;
+  const impression = saved?.impression;
 
   if (!perfume) {
     return (
@@ -33,8 +37,6 @@ export default function Summary() {
       </div>
     );
   }
-
-  console.log({ currentNotes, savedNotes });
 
   return (
     <div className={styles["main-testing"]}>
@@ -124,12 +126,10 @@ export default function Summary() {
           </div>
         </>
       )}
-      {currentNotes?.impression && (
+      {impression && (
         <>
           <h1 className={styles["header-summary"]}> Заметка :</h1>
-          <div className={styles["impressions-content"]}>
-            {currentNotes.impression}
-          </div>
+          <div className={styles["impressions-content"]}>{impression}</div>
         </>
       )}
     </div>

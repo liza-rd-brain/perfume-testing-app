@@ -5,7 +5,7 @@ export const getIntersections = (arr1: TArray, arr2: TArray) => {
     let result = [];
 
     if (Array.isArray(arr1) && Array.isArray(arr2)) {
-        debugger;
+
         // Создаём хеш-таблицу из второго массива
         for (var i = 0; i < arr2.length; i++) {
             set2[arr2[i]] = true;

@@ -26,9 +26,11 @@ export const loadAllSavedNotes = async (userId: number): Promise<Omit<SavedNotes
         const result = data.map(item => ({
             perfume_id: item.perfume_id,
 
-            top: item.notes?.top || [],
-            middle: item.notes?.middle || [],
-            base: item.notes?.base || [],
+            notes: {
+                top: item.notes?.top || [],
+                middle: item.notes?.middle || [],
+                base: item.notes?.base || [],
+            },
 
             impression: item.impression || "",
             isDone: item.isDone || false,

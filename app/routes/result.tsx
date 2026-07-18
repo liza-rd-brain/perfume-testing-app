@@ -41,9 +41,7 @@ export default function Result() {
   //TODO: helper
 
   const [noteList, setNoteList] = useState<{
-    top: number[];
-    base: number[];
-    middle: number[];
+    notes: { top: number[]; base: number[]; middle: number[] };
     impression: string;
     isDone: boolean;
   }>(selectedNotes);
@@ -64,17 +62,19 @@ export default function Result() {
   const sourceNoteIdTop = perfume?.notes?.top
     ? getIdList(perfume?.notes?.top)
     : [];
-  const selectedNotesTop = selectedNotes?.top;
+  const selectedNotesTop = selectedNotes?.notes.top;
+
+  console.log({ sourceNoteIdTop, selectedNotesTop }, "Result");
 
   const sourceNoteIdMiddle = perfume?.notes?.middle
     ? getIdList(perfume.notes.middle)
     : [];
-  const selectedNotesMiddle = noteList?.middle;
+  const selectedNotesMiddle = noteList?.notes.middle;
 
   const sourceNoteIdBase = perfume?.notes?.base
     ? getIdList(perfume?.notes?.base)
     : [];
-  const selectedNotesBase = noteList?.base;
+  const selectedNotesBase = noteList?.notes?.base;
 
   const topIntersection =
     getIntersections(sourceNoteIdTop, selectedNotesTop) || [];
@@ -195,7 +195,7 @@ export default function Result() {
       )}
       {noteSumm === 0 && (
         <div>
-          🌀0 нот из {sourceNoteSumm}. Хитрый парфюм!
+          🌀0 нот из {sourceNoteSumm}.
           <br /> Пора узнать что это такое!
         </div>
       )}
