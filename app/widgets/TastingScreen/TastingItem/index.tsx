@@ -73,8 +73,6 @@ export const TastingScreen = () => {
     impression: string;
   }>(getInitialState);
 
-  console.log({ noteList });
-
   const {
     top = [],
     base = [],

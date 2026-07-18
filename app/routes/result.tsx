@@ -6,16 +6,15 @@ import {
   useNavigate,
   useParams,
 } from "react-router";
-import { TastingScreen } from "~/widgets/TastingScreen/TastingItem";
-import { useAppData } from "~/context/AppContext"; // ← Добавить!
+
+import { useAppData } from "~/context/AppContext";
 import styles from "./route.module.css";
 import { NoteList } from "~/components/NoteList";
 import { getIntersections } from "~/helpers/getIntersections";
 
-import { usePersistedUser } from "~/hooks/usePersistedUser";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import commonStyles from "../style/common.module.css";
-import type { Note } from "~/types";
+
 import { supabase } from "~/lib/supabase";
 import { BackButton } from "~/components/NoteList/BackButton";
 
@@ -62,9 +61,8 @@ export default function Result() {
   const sourceNoteIdTop = perfume?.notes?.top
     ? getIdList(perfume?.notes?.top)
     : [];
-  const selectedNotesTop = selectedNotes?.notes.top;
 
-  console.log({ sourceNoteIdTop, selectedNotesTop }, "Result");
+  const selectedNotesTop = selectedNotes?.notes.top;
 
   const sourceNoteIdMiddle = perfume?.notes?.middle
     ? getIdList(perfume.notes.middle)
@@ -97,7 +95,10 @@ export default function Result() {
     ...(sourceNoteIdBase || []),
   ].length;
 
-  const markDone = async () => {
+  const markDone = async (conditionToPrevent: boolean) => {
+    if (conditionToPrevent) {
+      return;
+    }
     try {
       // 1. Сохраняем в БД
       const { error } = await supabase.from("user-experience").upsert(
@@ -138,6 +139,11 @@ export default function Result() {
 
   const isDone = noteList?.isDone;
 
+  const notChosenNotes =
+    !selectedNotesTop.length &&
+    !selectedNotesMiddle.length &&
+    !selectedNotesBase.length;
+
   return (
     <div className={styles["main-testing"]}>
       <div className={styles["header-container"]}>
@@ -167,43 +173,52 @@ export default function Result() {
       {perfume.notes?.base && !!baseIntersection.length && (
         <NoteList noteList={baseIntersection} title="Базовые ноты" />
       )}
-      {noteSumm >= 4 && (
-        <div>
-          💫 Отгадано {noteSumm} нот из {sourceNoteSumm}!
-          <br /> Потрясающий результат!
-        </div>
-      )}
-      {noteSumm === 3 && (
-        <div>
-          🌟 {noteSumm} ноты! из {sourceNoteSumm}
-          <br />
-          Отгаданы главные аккорды?
-        </div>
-      )}
-      {noteSumm === 2 && (
-        <div>
-          ✨ {noteSumm} ноты из {sourceNoteSumm}!
-          <br /> Ты на верном пути!
-        </div>
-      )}
-      {noteSumm === 1 && (
-        <div>
-          🌿 {noteSumm} нота из {sourceNoteSumm}!
-          <br />
-          Ты начинаешь видеть картину аромата
-        </div>
-      )}
-      {noteSumm === 0 && (
-        <div>
-          🌀0 нот из {sourceNoteSumm}.
-          <br /> Пора узнать что это такое!
-        </div>
+      {!notChosenNotes && (
+        <>
+          {noteSumm >= 4 && (
+            <div>
+              💫 Отгадано {noteSumm} нот из {sourceNoteSumm}!
+              <br /> Потрясающий результат!
+            </div>
+          )}
+          {noteSumm === 3 && (
+            <div>
+              🌟 {noteSumm} ноты! из {sourceNoteSumm}
+              <br />
+              Отгаданы главные аккорды?
+            </div>
+          )}
+          {noteSumm === 2 && (
+            <div>
+              ✨ {noteSumm} ноты из {sourceNoteSumm}!
+              <br /> Ты на верном пути!
+            </div>
+          )}
+          {noteSumm === 1 && (
+            <div>
+              🌿 {noteSumm} нота из {sourceNoteSumm}!
+              <br />
+              Ты начинаешь видеть картину аромата
+            </div>
+          )}
+          {noteSumm === 0 && (
+            <div>
+              🌀0 нот из {sourceNoteSumm}.
+              <br /> Пора узнать что это такое!
+            </div>
+          )}
+        </>
       )}
 
-      <button key={id} className={`${commonStyles.button}`} onClick={markDone}>
-        Открыть парфюм
+      <button
+        key={id}
+        className={`${commonStyles.button} ${commonStyles.buttonWithMarginTop}`}
+        onClick={() => markDone(notChosenNotes)}
+      >
+        {notChosenNotes
+          ? "📝  Выбери хотя бы пару нот"
+          : "✨ Записать впечатление и открыть парфюм"}
       </button>
-      <p>изменить первое впечатление уже нельзя </p>
     </div>
   );
 }

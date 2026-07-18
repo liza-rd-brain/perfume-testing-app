@@ -9,9 +9,7 @@ export default function Summary() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
 
-  const { perfumeList, user, savedNotes } = useAppData();
-
-  console.log({ savedNotes }, "Summary");
+  const { perfumeList, savedNotes } = useAppData();
 
   const perfumeFromState = location.state?.perfume;
 

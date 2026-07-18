@@ -64,9 +64,6 @@ export default function Root() {
   } = data;
 
   const [savedNotes, setSavedNotes] = useState(initialSavedNotes);
-  console.log({ savedNotes }, "root");
-  console.log({ perfumeList }, "root");
-  console.log({ data }, "root");
 
   return (
     <html lang="ru">

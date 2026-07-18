@@ -26,8 +26,6 @@ export const TastingNew = ({
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
 
-  console.log({ noteList }, "TastingNew");
-
   const handleSearchChange = ({
     e,
     activeType,

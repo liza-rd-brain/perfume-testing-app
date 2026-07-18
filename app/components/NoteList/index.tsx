@@ -17,8 +17,6 @@ export const NoteList = ({
   } | null;
   const notes = rootData?.notes || [];
 
-  console.log({ rootData }, "NoteList");
-
   const noteData = noteList?.map((item: number | { id: number }) =>
     notes?.find((note) => {
       if (typeof item === "number") {

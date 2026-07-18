@@ -47,8 +47,6 @@ export async function getAllNotes() {
 
   notesCache.set(cacheKey, allNotes);
 
-  console.log({ allNotes });
-
   return allNotes;
 }
 
@@ -57,8 +55,6 @@ export async function getPerfumeList() {
     .from("perfume-set-1")
     .select("id, name, perfumer, brand, link, notes, image")
     .order("id");
-
-  console.log({ perfumeData });
 
   if (perfumeError) {
     console.error("❌ Perfume error:", perfumeError);
