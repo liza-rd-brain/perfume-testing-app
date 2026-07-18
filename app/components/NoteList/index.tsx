@@ -1,6 +1,6 @@
 import { useRouteLoaderData } from "react-router";
 import styles from "./style.module.css";
-import type { Base, Note } from "~/types";
+import type { Base, Note, PerfumeInSet } from "~/types";
 
 export const NoteList = ({
   noteList,
@@ -13,9 +13,11 @@ export const NoteList = ({
 }) => {
   const rootData = useRouteLoaderData("root") as {
     notes?: Note[];
-    perfumeList?: any[];
+    perfumeList?: PerfumeInSet[];
   } | null;
   const notes = rootData?.notes || [];
+
+  console.log({ rootData }, "NoteList");
 
   const noteData = noteList?.map((item: number | { id: number }) =>
     notes?.find((note) => {

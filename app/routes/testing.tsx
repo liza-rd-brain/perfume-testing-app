@@ -6,7 +6,7 @@ import styles from "./route.module.css";
 import { BackButton } from "~/components/NoteList/BackButton";
 import { useMemo } from "react";
 
-export default function Testing(props: any) {
+export default function Testing() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
 
@@ -25,7 +25,7 @@ export default function Testing(props: any) {
   // ✅ 4. Проверка isDone (БЕЗ useMemo внутри функции!)
   const checkIsDone = (id: number) => {
     if (!Array.isArray(savedNotes)) return false;
-    const note = savedNotes.find((note: any) => note?.perfume_id === id);
+    const note = savedNotes.find((note) => note?.perfume_id === id);
     return note?.isDone || false;
   };
 

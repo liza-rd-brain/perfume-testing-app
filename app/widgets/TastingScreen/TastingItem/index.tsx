@@ -12,13 +12,19 @@ import { supabase } from "~/lib/supabase";
 import { usePersistedUser } from "~/hooks/usePersistedUser";
 
 import { TastingNew } from "./TastingNew";
-import { Base, type Note } from "~/types";
+import {
+  Base,
+  type Note,
+  type Perfume,
+  type SavedNotes,
+  type UserData,
+} from "~/types";
 import commonStyles from "~/style/common.module.css";
 
 interface TastingScreenProps {
   notes: Note[];
   error?: string | null;
-  perfumeList: any;
+  perfumeList: Perfume[];
 }
 
 const SECTIONS = [
@@ -29,15 +35,15 @@ const SECTIONS = [
   { id: "impressions", label: "Заметка" },
 ];
 
-export const TastingScreen = (props: any) => {
+export const TastingScreen = () => {
   //TODO: используем потому что это именно компонент! а не роут! почитать!
   const rootData = useRouteLoaderData("root") as {
     notes: Note[];
-    perfumeList?: any[];
+    perfumeList?: Perfume[];
     impression: string;
-    savedNotes: any[];
-    isDone: any;
-    userId: any;
+    savedNotes: SavedNotes[];
+    isDone: boolean;
+    userId: number;
     setSavedNotes: any;
   } | null;
 
@@ -79,11 +85,13 @@ export const TastingScreen = (props: any) => {
     impression: string;
   }>(getInitialState);
 
+  console.log({ noteList });
+
   const {
     top = [],
     base = [],
     middle = [],
-  } = rootData?.perfumeList?.[perfumeId - 1]?.notes;
+  } = rootData?.perfumeList?.[perfumeId - 1]?.notes ?? {};
 
   const [activeType, setActiveType] = useState<Base | null>(Base.TOP);
   const [activeSection, setActiveSection] = useState<string>(

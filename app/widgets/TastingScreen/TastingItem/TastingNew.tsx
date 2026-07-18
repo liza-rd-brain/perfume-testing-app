@@ -2,7 +2,7 @@ import { useState } from "react";
 import styles from "./style.module.css";
 import { useLocation, useRouteLoaderData } from "react-router";
 import { supabase } from "~/lib/supabase";
-import { Base, type Note } from "~/types";
+import { Base, type Note, type SavedNotes, type UserData } from "~/types";
 
 export const TastingNew = ({
   noteList,
@@ -14,21 +14,19 @@ export const TastingNew = ({
   activeType,
   changeActiveType,
 }: {
-  noteList: any;
+  noteList: Pick<SavedNotes, "top" | "middle" | "base" | "impression">;
   userId: number;
   perfumeId: number;
-  notes: any;
+  notes: Note[];
   type: Base | null;
   activeType: Base | null;
-  addNewNotes: (note: any) => void;
+  addNewNotes: ({ id, type }: { id: number; type: Base }) => void;
   changeActiveType: (type: Base) => void;
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
 
-  const location = useLocation();
-
-  //   const perfumeList = rootData?.perfumeList || [];
+  console.log({ noteList }, "TastingNew");
 
   const handleSearchChange = ({
     e,
@@ -58,7 +56,7 @@ export const TastingNew = ({
     e,
   }: {
     note: Note;
-    type: string;
+    type: Base;
     e: React.MouseEvent<HTMLLIElement, MouseEvent>;
   }) => {
     e.stopPropagation();

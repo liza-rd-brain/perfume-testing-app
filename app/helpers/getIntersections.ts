@@ -1,8 +1,8 @@
-type TArray = number[]
+type TArray = number[] | undefined
 
 export const getIntersections = (arr1: TArray, arr2: TArray) => {
-    var set2: Record<number, boolean> = {};
-    var result = [];
+    let set2: Record<number, boolean> = {};
+    let result = [];
 
     if (Array.isArray(arr1) && Array.isArray(arr2)) {
         debugger;
@@ -20,5 +20,6 @@ export const getIntersections = (arr1: TArray, arr2: TArray) => {
 
         return result;
     }
+    return []
 
 }

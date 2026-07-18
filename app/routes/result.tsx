@@ -19,11 +19,17 @@ import type { Note } from "~/types";
 import { supabase } from "~/lib/supabase";
 import { BackButton } from "~/components/NoteList/BackButton";
 
-const getIdList = (array: []) => {
+const getIdList = (
+  array: [
+    {
+      id: number;
+    },
+  ],
+) => {
   return array?.map((item: { id: number }) => item.id);
 };
 
-export default function Result(props: any) {
+export default function Result() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const { perfumeList, user: userId, setSavedNotes } = useAppData();
@@ -55,20 +61,27 @@ export default function Result(props: any) {
     );
   }
 
-  const sourceNoteIdTop = getIdList(perfume?.notes?.top);
+  const sourceNoteIdTop = perfume?.notes?.top
+    ? getIdList(perfume?.notes?.top)
+    : [];
   const selectedNotesTop = selectedNotes?.top;
 
-  const sourceNoteIdMiddle = getIdList(perfume?.notes?.middle);
+  const sourceNoteIdMiddle = perfume?.notes?.middle
+    ? getIdList(perfume.notes.middle)
+    : [];
   const selectedNotesMiddle = noteList?.middle;
 
-  const sourceNoteIdBase = getIdList(perfume?.notes?.base);
+  const sourceNoteIdBase = perfume?.notes?.base
+    ? getIdList(perfume?.notes?.base)
+    : [];
   const selectedNotesBase = noteList?.base;
 
   const topIntersection =
     getIntersections(sourceNoteIdTop, selectedNotesTop) || [];
 
-  const middleIntersection =
-    getIntersections(sourceNoteIdMiddle, selectedNotesMiddle) || [];
+  const middleIntersection = sourceNoteIdMiddle
+    ? getIntersections(sourceNoteIdMiddle, selectedNotesMiddle)
+    : [];
   const baseIntersection =
     getIntersections(sourceNoteIdBase, selectedNotesBase) || [];
 
@@ -141,11 +154,11 @@ export default function Result(props: any) {
       {!!perfume?.notes?.top && !!topIntersection.length && (
         <NoteList noteList={topIntersection} title="Верхние ноты" />
       )}
-      {!!middleIntersection.length && (
+      {!!middleIntersection?.length && (
         <NoteList
           noteList={middleIntersection}
           title={
-            !perfume.notes.top && !perfume.notes.base
+            !perfume?.notes?.top && !perfume?.notes?.base
               ? "Общие ноты"
               : "Средние ноты"
           }

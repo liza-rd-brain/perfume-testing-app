@@ -1,14 +1,9 @@
 
 import { supabase } from "~/lib/supabase";
+import type { PerfumeInSet, SavedNotes } from '~/types';
 
 
-export const loadAllSavedNotes = async (userId: number): Promise<{
-    perfume_id: number;
-    top: any[];
-    middle: any[];
-    base: any[];
-    impression: string;
-}[] | undefined> => {
+export const loadAllSavedNotes = async (userId: number): Promise<Omit<SavedNotes, "user_id" | "id">[] | undefined> => {
     if (!userId) return;
 
     try {
@@ -30,9 +25,11 @@ export const loadAllSavedNotes = async (userId: number): Promise<{
         // Преобразуем данные в удобный формат
         const result = data.map(item => ({
             perfume_id: item.perfume_id,
+
             top: item.notes?.top || [],
             middle: item.notes?.middle || [],
             base: item.notes?.base || [],
+
             impression: item.impression || "",
             isDone: item.isDone || false,
         }));

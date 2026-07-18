@@ -1,6 +1,7 @@
 // app/lib/data.server.ts
 import { supabaseAdmin } from "./supabase";
 import { notesCache } from "./notes-cache";
+import type { Note } from "~/types";
 
 export async function getAllNotes() {
   const cacheKey = "all-notes";
@@ -10,7 +11,7 @@ export async function getAllNotes() {
     return cached;
   }
 
-  let allNotes: any[] = [];
+  let allNotes: Note[] = [];
   let from = 0;
   const pageSize = 1000;
 
@@ -45,6 +46,8 @@ export async function getAllNotes() {
   }
 
   notesCache.set(cacheKey, allNotes);
+
+  console.log({ allNotes });
 
   return allNotes;
 }

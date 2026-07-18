@@ -13,16 +13,16 @@ import { AppProvider } from "./context/AppContext";
 import { getSession } from "./lib/session.server";
 import { loadAllSavedNotes } from "./widgets/TastingScreen/TastingItem/loadAllSavedNotes";
 import { useEffect, useState } from "react";
-import type { Note } from "./types";
+import type { Note, Perfume, SavedNotes } from "./types";
 
 // ✅ Импортируем из отдельного файла
 import { getAllNotes, getPerfumeList } from "~/lib/data.server";
 
 type LoaderData = {
   notes: Note[];
-  perfumeList: any[];
+  perfumeList: Perfume[];
   userId: number | null;
-  savedNotes: any[];
+  savedNotes: SavedNotes[];
 };
 
 export async function loader({ request }: { request: Request }) {

@@ -5,7 +5,7 @@ import { NoteList } from "~/components/NoteList";
 
 import { ToIndexButton } from "~/components/NoteList/ToIndexButton";
 
-export default function Summary(props: any) {
+export default function Summary() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
 
@@ -33,6 +33,8 @@ export default function Summary(props: any) {
       </div>
     );
   }
+
+  console.log({ currentNotes, savedNotes });
 
   return (
     <div className={styles["main-testing"]}>
@@ -81,7 +83,10 @@ export default function Summary(props: any) {
           <h1 className={styles["header-summary"]}> Верхние ноты :</h1>
 
           <div className={styles["with-separator-block"]}>
-            <NoteList noteList={perfume.notes.top} title="Ноты с фрагрантики" />
+            <NoteList
+              noteList={perfume?.notes?.top}
+              title="Ноты с фрагрантики"
+            />
             {!!currentNotes?.top?.length && (
               <NoteList noteList={currentNotes?.top ?? []} title="Твои ноты" />
             )}
@@ -95,18 +100,21 @@ export default function Summary(props: any) {
         :
       </h1>
       <div className={styles["with-separator-block"]}>
-        <NoteList noteList={perfume.notes.middle} title="Ноты с фрагрантики" />
+        <NoteList
+          noteList={perfume?.notes?.middle}
+          title="Ноты с фрагрантики"
+        />
         {!!currentNotes?.middle?.length && (
           <NoteList noteList={currentNotes?.middle ?? []} title="Твои ноты" />
         )}
       </div>
-      {perfume.notes.base?.length && (
+      {perfume.notes?.base?.length && (
         <>
           <h1 className={styles["header-summary"]}> Базовые ноты :</h1>
 
           <div className={styles["with-separator-block"]}>
             <NoteList
-              noteList={perfume.notes.base}
+              noteList={perfume?.notes?.base}
               title="Ноты с фрагрантики"
             />
 

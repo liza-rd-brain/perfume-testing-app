@@ -15,7 +15,7 @@ import { ToIndexButton } from "~/components/NoteList/ToIndexButton";
 import { supabase } from "~/lib/supabase";
 import { useEffect } from "react";
 
-export default function Result(props: any) {
+export default function Result() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const navigate = useNavigate();

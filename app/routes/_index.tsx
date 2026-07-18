@@ -10,6 +10,7 @@ import { useEffect } from "react";
 
 // ✅ Импортируем из отдельного файла
 import { getAllNotes, getPerfumeList } from "~/lib/data.server";
+import type { Note, Perfume, SavedNotes, User } from "~/types";
 
 export async function loader({ request }: { request: Request }) {
   try {
@@ -55,11 +56,11 @@ export const headers = () => ({
 export const shouldRevalidate = () => true;
 
 type LoaderData = {
-  perfumeList: any[];
-  notes: any[];
-  user: any;
+  perfumeList: Perfume[];
+  notes: Note[];
+  user: User;
   error: string | null;
-  savedNotes: any[];
+  savedNotes: SavedNotes[];
 };
 
 export default function Index() {

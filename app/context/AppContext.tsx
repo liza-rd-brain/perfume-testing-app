@@ -1,22 +1,6 @@
 // app/context/AppContext.tsx
 import { createContext, useContext, type ReactNode } from "react";
-
-interface Note {
-  id: number;
-  name: string;
-  image?: string;
-  url?: string;
-}
-
-interface Perfume {
-  id: number;
-  name: string;
-  perfumer: string;
-  brand: string;
-  link?: string;
-  notes?: any;
-  impression: string;
-}
+import type { Note, Perfume, SavedNotes, User } from "~/types";
 
 // ✅ Тип для setSavedNotes (поддерживает массив или функцию)
 type SetSavedNotesType = (payload: any[] | ((prev: any[]) => any[])) => void;
@@ -24,11 +8,11 @@ type SetSavedNotesType = (payload: any[] | ((prev: any[]) => any[])) => void;
 interface AppContextType {
   notes: Note[];
   perfumeList: Perfume[];
-  user?: any;
+  user?: User | null;
   isLoading?: boolean;
   error?: string | null;
-  savedNotes: any[]; // ✅ Всегда массив
-  setSavedNotes: SetSavedNotesType; // ✅ Правильный тип
+  savedNotes: SavedNotes[];
+  setSavedNotes: SetSavedNotesType;
 }
 
 // ✅ Создаем контекст с дефолтными значениями

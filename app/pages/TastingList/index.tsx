@@ -3,8 +3,17 @@ import { NavLink, useNavigate, useRouteLoaderData } from "react-router";
 import styles from "./style.module.css";
 import { useAppData } from "~/context/AppContext";
 import { AddUserButton } from "~/components/NoteList/AddUserButton";
+import type { Perfume, SavedNotes, User } from "~/types";
 
-export const TastingList = ({ perfumeList, savedNotes, user }: any) => {
+export const TastingList = ({
+  perfumeList,
+  savedNotes,
+  user,
+}: {
+  perfumeList: Perfume[];
+  savedNotes: SavedNotes[];
+  user: User;
+}) => {
   const navigate = useNavigate();
 
   // ✅ Создаём Set только из ID, где isDone === true
@@ -12,8 +21,8 @@ export const TastingList = ({ perfumeList, savedNotes, user }: any) => {
     if (!Array.isArray(savedNotes)) return new Set();
 
     const ids = savedNotes
-      .filter((note: any) => note?.isDone === true)
-      .map((note: any) => note.perfume_id);
+      .filter((note) => note?.isDone === true)
+      .map((note) => note.perfume_id);
 
     return new Set(ids);
   }, [savedNotes]);
